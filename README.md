@@ -70,7 +70,7 @@ POST | /services/{id}/cocktails/{id} | Asociar cóctel a servicio
 
 
 👨‍💻 Autor
-Franco [Franco Aguirre]
+Franco 
 Desarrollador Web Full Stack
 
 
