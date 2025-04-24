@@ -8,6 +8,7 @@ import com.SySTomateAlgo.TomateAlgo.Repositories.ClientRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.EventRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ServiceRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.EventService;
+import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class EventServiceImpl implements EventService {
     public ServiceRepository serviceRepository;
     @Autowired
     public BarraRepository barraRepository;
-
+    @Autowired
+    public OrderService orderService;
 
     @Override
     public Event save(Event event) {
@@ -48,7 +50,11 @@ public class EventServiceImpl implements EventService {
             event.setService(service);
         }
 
-        return repository.save(event);
+        Event savedEvent = repository.save(event);
+
+        orderService.generateOrderFromEvent(savedEvent);
+
+        return savedEvent;
     }
 
 
