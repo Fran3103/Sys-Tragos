@@ -54,7 +54,9 @@ Producto <|-- Cocktail Cocktail <|-- Service Event --> Client Event --> Service 
 3. Configurar application.properties con tus credenciales:
 
 spring.datasource.url=jdbc:mysql://localhost:3306/TomateAlgoDB
+
 spring.datasource.username=root
+
 spring.datasource.password=tu_contraseña
 
 4. Ejecutar con:
