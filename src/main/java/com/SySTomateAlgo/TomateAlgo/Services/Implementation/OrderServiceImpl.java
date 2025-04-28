@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -34,6 +35,19 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        Map<ProductType , Double> totalsByProductType = new EnumMap<>(ProductType.class);
+        Map<AlcoholType, Double> totalsByAlcoholType = new EnumMap<>(AlcoholType.class);
+
+        for (Map.Entry<Product,Double> e: productTotals.entrySet()){
+            Product p = e.getKey();
+            double amount = e.getValue();
+
+            totalsByProductType.merge(p.getType(),amount, Double::sum);
+            if (p.getType() == ProductType.Insumo_Alcoholico && p.getAlcoholType() != null){
+                totalsByAlcoholType.merge(p.getAlcoholType(), amount, Double::sum);
+            }
+        }
+
         Order order = new Order();
         order.setEvent(event);
         List<OrderItem> items = productTotals.entrySet().stream()
@@ -44,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
                     li.setOrder(order);
                     return li;
                 })
-                .toList();
+                .collect(Collectors.toList());
         order.setItems(items);
         return orderRepository.save(order);
 

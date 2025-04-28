@@ -2,6 +2,7 @@ package com.SySTomateAlgo.TomateAlgo.Services;
 
 import com.SySTomateAlgo.TomateAlgo.Entities.Order;
 import com.SySTomateAlgo.TomateAlgo.Entities.OrderItem;
+import com.SySTomateAlgo.TomateAlgo.Entities.ProductType;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,8 @@ import org.thymeleaf.context.Context;
 
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PdfGeneratorService {
@@ -26,36 +25,15 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("event", order.getEvent());
 
-        // Inicializamos las listas por subTipo
-        List<OrderItem> alcohol = new ArrayList<>();
-        List<OrderItem> nonAlcohol = new ArrayList<>();
-        List<OrderItem> equip = new ArrayList<>();
-        List<OrderItem> fruit = new ArrayList<>();
-        List<OrderItem> ice = new ArrayList<>();
-        List<OrderItem> glass = new ArrayList<>();
+        Map<ProductType, List<OrderItem>> itemsByCategory =
+                order.getItems().stream()
+                        .collect(Collectors.groupingBy(item ->
+                                        item.getProduct().getType(),
+                                () -> new EnumMap<>(ProductType.class),
+                                Collectors.toList()
+                        ));
+        context.setVariable("ItemsByCategory", itemsByCategory);
 
-        // Clasificamos los items
-        for (OrderItem item : order.getItems()) {
-            String subType = item.getProduct().getSubType();
-            if (subType == null) continue;
-
-            switch (subType.toLowerCase()) {
-                case "alcohol" -> alcohol.add(item);
-                case "sin alcohol", "bebida sin alcohol" -> nonAlcohol.add(item);
-                case "barra", "equipamiento", "barra movil" -> equip.add(item);
-                case "fruta" -> fruit.add(item);
-                case "hielo" -> ice.add(item);
-                case "cristaleria" -> glass.add(item);
-            }
-        }
-
-        // Agregamos todo al contexto
-        context.setVariable("alcohol", alcohol);
-        context.setVariable("nonAlcohol", nonAlcohol);
-        context.setVariable("equip", equip);
-        context.setVariable("fruit", fruit);
-        context.setVariable("ice", ice);
-        context.setVariable("glass", glass);
 
         String htmlContent = templateEngine.process("order-template", context);
 

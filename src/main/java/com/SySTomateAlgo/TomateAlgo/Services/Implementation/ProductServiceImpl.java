@@ -46,7 +46,6 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setCapacity(updateData.getCapacity());
         existingProduct.setStock(updateData.getStock());
         existingProduct.setAlcoholType(updateData.getAlcoholType());
-        existingProduct.setSubType(updateData.getSubType());
 
         return repository.save(existingProduct);
     }
