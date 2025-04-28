@@ -23,70 +23,17 @@
 <p><strong>Fecha:</strong> <span th:text="${event.date}">Fecha</span></p>
 <p><strong>Cantidad de Invitados:</strong> <span th:text="${event.invitaCant}">100</span></p>
 
-<div class="section">
-    <h2>Insumos con Alcohol</h2>
-    <table th:if="${alcohol.size() > 0}">
+
+<div class="section" th:each="entry : ${itemsByCategory}">
+    <h2 th:text="${{entry.key}}">Categoria</h2>
+    <table th:if="${#lists.size(entry.value) > 0}">
         <tr><th>Producto</th><th>Cantidad (ml)</th></tr>
-        <tr th:each="item : ${alcohol}">
+        <tr th:each="item : ${entry.value}">
             <td th:text="${item.product.name}">Nombre</td>
             <td th:text="${item.quantity}">Cantidad</td>
         </tr>
     </table>
 </div>
 
-<div class="section">
-    <h2>Bebidas sin Alcohol</h2>
-    <table th:if="${nonAlcohol.size() > 0}">
-        <tr><th>Producto</th><th>Cantidad (ml)</th></tr>
-        <tr th:each="item : ${nonAlcohol}">
-            <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
-        </tr>
-    </table>
-</div>
-
-<div class="section">
-    <h2>Equipamiento</h2>
-    <table th:if="${equip.size() > 0}">
-        <tr><th>Producto</th><th>Cantidad</th></tr>
-        <tr th:each="item : ${equip}">
-            <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
-        </tr>
-    </table>
-</div>
-
-<div class="section">
-    <h2>Frutas</h2>
-    <table th:if="${fruit.size() > 0}">
-        <tr><th>Producto</th><th>Cantidad</th></tr>
-        <tr th:each="item : ${fruit}">
-            <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
-        </tr>
-    </table>
-</div>
-
-<div class="section">
-    <h2>Hielo</h2>
-    <table th:if="${ice.size() > 0}">
-        <tr><th>Producto</th><th>Cantidad</th></tr>
-        <tr th:each="item : ${ice}">
-            <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
-        </tr>
-    </table>
-</div>
-
-<div class="section">
-    <h2>Cristalería</h2>
-    <table th:if="${glass.size() > 0}">
-        <tr><th>Producto</th><th>Cantidad</th></tr>
-        <tr th:each="item : ${glass}">
-            <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
-        </tr>
-    </table>
-</div>
 </body>
 </html>
