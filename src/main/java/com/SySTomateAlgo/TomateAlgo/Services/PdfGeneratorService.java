@@ -32,7 +32,7 @@ public class PdfGeneratorService {
                                 () -> new EnumMap<>(ProductType.class),
                                 Collectors.toList()
                         ));
-        context.setVariable("ItemsByCategory", itemsByCategory);
+        context.setVariable("itemsByCategory", itemsByCategory);
 
 
         String htmlContent = templateEngine.process("order-template", context);

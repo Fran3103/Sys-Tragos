@@ -8,6 +8,7 @@ import com.SySTomateAlgo.TomateAlgo.Entities.Product;
 import com.SySTomateAlgo.TomateAlgo.Repositories.CocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.CocktailService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cocktails")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class CocktailController {
 
     @Autowired
