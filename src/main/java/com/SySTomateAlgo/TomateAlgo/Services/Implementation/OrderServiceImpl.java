@@ -25,25 +25,26 @@ public class OrderServiceImpl implements OrderService {
         List<Cocktail> cocktails = event.getService().getCocktails();
 
         for (Cocktail cocktail : cocktails){
-            for (Product ingredient : cocktail.getIngredients()){
-                double totalAmount = guests * estimatedDrinkPerPerson * 1.0;
-                productTotals.merge(ingredient,totalAmount,Double::sum);
+            for (CocktailIngredients ci : cocktail.getIngredients()){
+                Product product = ci.getProduct();
+                double ouncesPerCocktail = ci.getOunces();
+
+                double totalOnces = guests * estimatedDrinkPerPerson * ouncesPerCocktail;
+                productTotals.merge(product,totalOnces,Double::sum);
             }
         }
 
-        List<OrderItem> items = new ArrayList<>();
         Order order = new Order();
-        order.setGeneratedAt(LocalDate.now());
         order.setEvent(event);
-
-        for (Map.Entry<Product, Double> entry: productTotals.entrySet()){
-            OrderItem item = new OrderItem();
-            item.setProduct(entry.getKey());
-            item.setQuantity(entry.getValue());
-            item.setOrder(order);
-            items.add(item);
-        }
-
+        List<OrderItem> items = productTotals.entrySet().stream()
+                .map(e -> {
+                    OrderItem li = new OrderItem();
+                    li.setProduct(e.getKey());
+                    li.setQuantity(e.getValue());
+                    li.setOrder(order);
+                    return li;
+                })
+                .toList();
         order.setItems(items);
         return orderRepository.save(order);
 

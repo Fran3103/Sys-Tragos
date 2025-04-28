@@ -5,7 +5,7 @@
     <title>Orden de Pedido</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 12px; }
-        h1 { text-align: center; }
+        h1 { text-align: center; font-size: 18px; }
         h2 { background-color: #eee; padding: 5px; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         th, td { border: 1px solid #999; padding: 5px; text-align: left; }
@@ -14,9 +14,10 @@
     </style>
 </head>
 <body>
-<h1>Orden de Pedido</h1>
+<h1><span th:text="${event.client.name}"></span> / <span th:text="${event.service.name}"></span> -
+    <span th:text="${event.invitaCant}"></span> / <span th:text="${event.date}"></span></h1>
 
-<h2>Datos del Evento</h2>
+<p><strong>Pedido:</strong> <span th:text="${event.id}"></span></p>
 <p><strong>Cliente:</strong> <span th:text="${event.client.name}">Cliente</span></p>
 <p><strong>Ubicación:</strong> <span th:text="${event.location}">Ubicación</span></p>
 <p><strong>Fecha:</strong> <span th:text="${event.date}">Fecha</span></p>

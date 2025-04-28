@@ -1,9 +1,11 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Barra")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Barra {
 
     @Id

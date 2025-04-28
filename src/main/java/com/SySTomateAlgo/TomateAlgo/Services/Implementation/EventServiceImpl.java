@@ -81,6 +81,12 @@ public class EventServiceImpl implements EventService {
         exitsEvent.setDetails(eventData.getDetails());
         exitsEvent.setLocation(eventData.getLocation());
         exitsEvent.setInvitaCant(eventData.getInvitaCant());
+        exitsEvent.setTypeEvent(eventData.getTypeEvent());
+        exitsEvent.setEndTime(eventData.getEndTime());
+        exitsEvent.setSetupNote(eventData.getSetupNote());
+        exitsEvent.setSetupTime(eventData.getSetupTime());
+        exitsEvent.setStartTime(eventData.getStartTime());
+        exitsEvent.setStatus(eventData.getStatus());
 
         if (eventData.getClient() != null) {
             exitsEvent.setClient(eventData.getClient());

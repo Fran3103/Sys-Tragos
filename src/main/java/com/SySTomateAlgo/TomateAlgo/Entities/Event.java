@@ -1,11 +1,14 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "Events")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Event {
 
     @Id
@@ -19,6 +22,20 @@ public class Event {
     private Integer invitaCant;
 
     private String details;
+
+    private String status;
+
+    private String typeEvent;
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
+    private LocalTime setupTime;
+
+    private String setupNote;
+
+
 
     @ManyToOne
     @JoinColumn(name = "client_id")
@@ -35,26 +52,39 @@ public class Event {
     public Event() {
     }
 
-    public Event(LocalDate date, String location, Integer invitaCant, String details, Client client, Service service, Barra barra) {
-        this.date = date;
-        this.location = location;
-        this.invitaCant = invitaCant;
-        this.details = details;
-        this.client = client;
-        this.service = service;
+    public Event(Barra barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, String typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date) {
         this.barra = barra;
+        this.service = service;
+        this.client = client;
+        this.setupNote = setupNote;
+        this.setupTime = setupTime;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.typeEvent = typeEvent;
+        this.status = status;
+        this.details = details;
+        this.invitaCant = invitaCant;
+        this.location = location;
+        this.date = date;
     }
 
-    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, Client client, Service service, Barra barra) {
+    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, String typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, Barra barra) {
         this.id = id;
         this.date = date;
         this.location = location;
         this.invitaCant = invitaCant;
         this.details = details;
+        this.status = status;
+        this.typeEvent = typeEvent;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.setupTime = setupTime;
+        this.setupNote = setupNote;
         this.client = client;
         this.service = service;
         this.barra = barra;
     }
+
 
     public Long getId() {
         return id;
@@ -94,6 +124,54 @@ public class Event {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTypeEvent() {
+        return typeEvent;
+    }
+
+    public void setTypeEvent(String typeEvent) {
+        this.typeEvent = typeEvent;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public LocalTime getSetupTime() {
+        return setupTime;
+    }
+
+    public void setSetupTime(LocalTime setupTime) {
+        this.setupTime = setupTime;
+    }
+
+    public String getSetupNote() {
+        return setupNote;
+    }
+
+    public void setSetupNote(String setupNote) {
+        this.setupNote = setupNote;
     }
 
     public Client getClient() {
