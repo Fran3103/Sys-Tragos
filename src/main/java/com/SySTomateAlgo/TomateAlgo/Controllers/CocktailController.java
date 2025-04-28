@@ -1,6 +1,9 @@
 package com.SySTomateAlgo.TomateAlgo.Controllers;
 
+import com.SySTomateAlgo.TomateAlgo.DTOs.CocktailIngredientDTO;
+import com.SySTomateAlgo.TomateAlgo.DTOs.CocktailRequestDTO;
 import com.SySTomateAlgo.TomateAlgo.Entities.Cocktail;
+import com.SySTomateAlgo.TomateAlgo.Entities.CocktailIngredients;
 import com.SySTomateAlgo.TomateAlgo.Entities.Product;
 import com.SySTomateAlgo.TomateAlgo.Repositories.CocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
@@ -30,8 +33,8 @@ public class CocktailController {
 
 
     @PostMapping
-    public ResponseEntity<Cocktail> save(@RequestBody Cocktail Cocktail){
-        return ResponseEntity.ok(service.save(Cocktail));
+    public ResponseEntity<Cocktail> save(@RequestBody CocktailRequestDTO dto){
+        return ResponseEntity.ok(service.save(dto));
     }
 
     @GetMapping("/{id}")
@@ -42,8 +45,8 @@ public class CocktailController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cocktail> update(@PathVariable Long id, @RequestBody Cocktail Cocktail){
-        return ResponseEntity.ok(service.update(id, Cocktail));
+    public ResponseEntity<Cocktail> update(@PathVariable Long id, @RequestBody CocktailRequestDTO dto){
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
 
@@ -53,19 +56,20 @@ public class CocktailController {
         return ResponseEntity.ok("El Cocktail fue eliminado con exito");
     }
 
-    @DeleteMapping("/{cocktailId}/ingredient/{ingredientId}")
+    @DeleteMapping("/{cocktailId}/ingredient/{ciId}")
     public ResponseEntity<String> removeIngredient(
             @PathVariable Long cocktailId,
-            @PathVariable Long ingredientId
+            @PathVariable Long ciId
     ){
         Cocktail cocktail = repository.findById(cocktailId)
                 .orElseThrow(()-> new RuntimeException("Cocktail no encontrado"));
 
-        List<Product> ingredients = cocktail.getIngredients();
+        CocktailIngredients toRemove = cocktail.getIngredients().stream()
+                        .filter(ci-> ci.getId().equals(ciId))
+                                .findFirst()
+                                        .orElseThrow(()->new RuntimeException("Ingrediente no encontrado"));
 
-        ingredients.removeIf(product -> product.getId().equals(ingredientId));
-
-        cocktail.setIngredients(ingredients);
+        cocktail.removeIngredient(toRemove);
 
         repository.save(cocktail);
 
@@ -73,24 +77,22 @@ public class CocktailController {
     }
 
 
-    @PostMapping("/{cocktailId}/ingredient/{ingredientId}")
-    public ResponseEntity<String> addIngredientToCocktail(
+    @PostMapping("/{cocktailId}/ingredient")
+    public ResponseEntity<String> addIngredient(
             @PathVariable Long cocktailId,
-            @PathVariable Long ingredientId
-    ){
+            @RequestBody CocktailIngredientDTO dto
+            ){
         Cocktail cocktail  = service.findById(cocktailId)
                 .orElseThrow(()-> new RuntimeException("Cocktail no encontrado"));
 
-        Product product = productRepository.findById(ingredientId)
+        Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(()-> new RuntimeException("Ingrediente  no encontrado"));
 
-        List<Product> ingredients = cocktail.getIngredients();
 
-        if (!ingredients.contains(product)){
-            ingredients.add(product);
-            cocktail.setIngredients(ingredients);
-            repository.save(cocktail);
-        }
+        CocktailIngredients ci = new CocktailIngredients(dto.getOunces(), product, cocktail);
+        cocktail.addIngredient(ci);
+
+        repository.save(cocktail);
 
         return ResponseEntity.ok("Ingrediente agregado");
     }

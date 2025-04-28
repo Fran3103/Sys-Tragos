@@ -1,11 +1,15 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "cocktails")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Cocktail {
 
     @Id
@@ -16,24 +20,23 @@ public class Cocktail {
 
     private String description;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-            name = "cocktail_ingredients",
-            joinColumns = @JoinColumn(name = "cocktail_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> ingredients;
+    @OneToMany(
+            mappedBy = "cocktail",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<CocktailIngredients> ingredients = new ArrayList<>();
 
     public Cocktail() {
     }
 
-    public Cocktail(String name, String description, List<Product> ingredients) {
+    public Cocktail(String name, String description, List<CocktailIngredients> ingredients) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
     }
 
-    public Cocktail(Long id, String name, String description, List<Product> ingredients) {
+    public Cocktail(Long id, String name, String description, List<CocktailIngredients> ingredients) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -64,11 +67,20 @@ public class Cocktail {
         this.description = description;
     }
 
-    public List<Product> getIngredients() {
+    public List<CocktailIngredients> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Product> ingredients) {
+    public void setIngredients(List<CocktailIngredients> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public void addIngredient(CocktailIngredients ci) {
+        ingredients.add(ci);
+        ci.setCocktail(this);
+    }
+    public void removeIngredient(CocktailIngredients ci) {
+        ingredients.remove(ci);
+        ci.setCocktail(null);
     }
 }

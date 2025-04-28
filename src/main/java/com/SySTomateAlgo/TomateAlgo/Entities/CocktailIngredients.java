@@ -1,9 +1,12 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cocktail_ingredient")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class CocktailIngredients {
 
     @Id
@@ -12,6 +15,7 @@ public class CocktailIngredients {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cocktail_id", nullable = false)
+    @JsonBackReference
     private Cocktail cocktail;
 
 

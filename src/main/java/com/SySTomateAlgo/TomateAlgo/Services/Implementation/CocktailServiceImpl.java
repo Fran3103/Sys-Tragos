@@ -1,10 +1,14 @@
 package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
+import com.SySTomateAlgo.TomateAlgo.DTOs.CocktailIngredientDTO;
+import com.SySTomateAlgo.TomateAlgo.DTOs.CocktailRequestDTO;
 import com.SySTomateAlgo.TomateAlgo.Entities.Cocktail;
+import com.SySTomateAlgo.TomateAlgo.Entities.CocktailIngredients;
 import com.SySTomateAlgo.TomateAlgo.Entities.Product;
 import com.SySTomateAlgo.TomateAlgo.Repositories.CocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.CocktailService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +24,19 @@ public class CocktailServiceImpl implements CocktailService {
 
 
     @Override
-    public Cocktail save(Cocktail cocktail) {
+    public Cocktail save(CocktailRequestDTO dto) {
 
-        List<Long> ingredientId = cocktail.getIngredients()
-                .stream()
-                .map(Product::getId)
-                .toList();
+        Cocktail cocktail = new Cocktail();
+        cocktail.setName(dto.getName());
+        cocktail.setDescription(dto.getDescription());
 
-        List<Product> fullIngredients = productRepository.findAllById(ingredientId);
+        for (CocktailIngredientDTO ing : dto.getIngredients()){
+            Product p = productRepository.findById(ing.getProductId())
+                    .orElseThrow(()-> new EntityNotFoundException("Producto no encontrado"));
+            CocktailIngredients ci = new CocktailIngredients(ing.getOunces(),p,cocktail);
+            cocktail.addIngredient(ci);
+        }
 
-        cocktail.setIngredients(fullIngredients);
         return repository.save(cocktail);
     }
 
@@ -49,29 +56,22 @@ public class CocktailServiceImpl implements CocktailService {
     }
 
     @Override
-    public Cocktail update(Long id, Cocktail cocktailData) {
+    public Cocktail update(Long id, CocktailRequestDTO dto) {
         Cocktail existCocktail = repository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Cocktail no encontrado"));
-        existCocktail.setName(cocktailData.getName());
-        existCocktail.setDescription(cocktailData.getDescription());
+        existCocktail.setName(dto.getName());
+        existCocktail.setDescription(dto.getDescription());
 
-        List<Long> newIds = cocktailData.getIngredients()
-                .stream()
-                .map(Product::getId)
-                .toList();
+        existCocktail.getIngredients().clear();
 
-        List<Product> newIngredients = productRepository.findAllById(newIds);
-
-        List<Product> allIngredients = new ArrayList<>(existCocktail.getIngredients());
-
-        allIngredients.addAll(newIngredients);
-
-        Set<Product> uniqueIngredients = new HashSet<>(allIngredients);
-
-
-
-        existCocktail.setIngredients(new ArrayList<>(uniqueIngredients));
+        for (CocktailIngredientDTO ing : dto.getIngredients()){
+            Product p = productRepository.findById(ing.getProductId())
+                    .orElseThrow(()-> new EntityNotFoundException("Producto no encontrado"));
+            CocktailIngredients ci = new CocktailIngredients(ing.getOunces(), p,existCocktail);
+            existCocktail.addIngredient(ci);
+        }
 
         return repository.save(existCocktail);
+
     }
 }

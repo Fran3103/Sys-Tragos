@@ -1,5 +1,6 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "Events")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Event {
 
     @Id
