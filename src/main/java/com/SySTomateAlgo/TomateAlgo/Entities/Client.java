@@ -20,13 +20,15 @@ public class Client {
 
     private String lastName;
 
-    private String clientType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "client_type", nullable = false)
+    private ClientType clientType;
 
 
     public Client() {
     }
 
-    public Client(String name, String email, String phone, String lastName, String clientType) {
+    public Client(String name, String email, String phone, String lastName, ClientType clientType) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -34,7 +36,7 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public Client(Long id, String name, String email, String phone, String lastName, String clientType) {
+    public Client(Long id, String name, String email, String phone, String lastName, ClientType clientType) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -83,11 +85,11 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public String getClientType() {
+    public ClientType getClientType() {
         return clientType;
     }
 
-    public void setClientType(String clientType) {
+    public void setClientType(ClientType clientType) {
         this.clientType = clientType;
     }
 }

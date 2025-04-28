@@ -1,11 +1,9 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Productos")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,31 +11,32 @@ public class Product {
 
     private String name;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_type", nullable = false)
+    private ProductType productType;
 
-    private String subType;
 
-    private String alcoholType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alcohol_type", nullable = true)
+    private AlcoholType alcoholType;
 
     private Double capacity;
 
     private Integer stock;
 
 
-    public Product(Long id, String name, String type, String subType, String alcoholType, Double capacity, Integer stock) {
+    public Product(Long id, String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock) {
         this.id = id;
         this.name = name;
-        this.type = type;
-        this.subType = subType;
+        this.productType = productType;
         this.alcoholType = alcoholType;
         this.capacity = capacity;
         this.stock = stock;
     }
 
-    public Product(String name, String type, String subType, String alcoholType, Double capacity, Integer stock) {
+    public Product(String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock) {
         this.name = name;
-        this.type = type;
-        this.subType = subType;
+        this.productType = productType;
         this.alcoholType = alcoholType;
         this.capacity = capacity;
         this.stock = stock;
@@ -62,27 +61,20 @@ public class Product {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public ProductType getType() {
+        return productType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(ProductType type) {
+        this.productType = type;
     }
 
-    public String getSubType() {
-        return subType;
-    }
 
-    public void setSubType(String subType) {
-        this.subType = subType;
-    }
-
-    public String getAlcoholType() {
+    public AlcoholType getAlcoholType() {
         return alcoholType;
     }
 
-    public void setAlcoholType(String alcoholType) {
+    public void setAlcoholType(AlcoholType alcoholType) {
         this.alcoholType = alcoholType;
     }
 

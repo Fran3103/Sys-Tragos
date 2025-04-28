@@ -43,6 +43,7 @@ public class ClientServiceImpl implements ClientService {
         existClient.setName(updateData.getName());
         existClient.setEmail(updateData.getEmail());
         existClient.setPhone(updateData.getPhone());
+        existClient.setClientType(updateData.getClientType());
 
 
         return repository.save(existClient);
