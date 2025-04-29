@@ -12,24 +12,44 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private Double quantity;
+    @Column(name = "ounces", nullable = false)
+    private Double ounces;
 
-    @ManyToOne
+    @Column(name = "units", nullable = false)
+    private Integer units;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference
     private Order order;
 
     public OrderItem() {}
 
-    public OrderItem(Product product, Double quantity) {
+    public OrderItem(Product product, Double ounces, Integer units, Order order) {
         this.product = product;
-        this.quantity = quantity;
+        this.ounces = ounces;
+        this.units = units;
+        this.order = order;
+    }
+
+    public OrderItem(Long id, Product product, Double ounces, Integer units, Order order) {
+        this.id = id;
+        this.product = product;
+        this.ounces = ounces;
+        this.units = units;
+        this.order = order;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Product getProduct() {
@@ -40,12 +60,20 @@ public class OrderItem {
         this.product = product;
     }
 
-    public Double getQuantity() {
-        return quantity;
+    public Double getOunces() {
+        return ounces;
     }
 
-    public void setQuantity(Double quantity) {
-        this.quantity = quantity;
+    public void setOunces(Double ounces) {
+        this.ounces = ounces;
+    }
+
+    public Integer getUnits() {
+        return units;
+    }
+
+    public void setUnits(Integer units) {
+        this.units = units;
     }
 
     public Order getOrder() {

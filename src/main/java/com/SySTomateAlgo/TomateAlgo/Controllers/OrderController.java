@@ -1,6 +1,8 @@
 package com.SySTomateAlgo.TomateAlgo.Controllers;
 
+import com.SySTomateAlgo.TomateAlgo.DTOs.OrderDTO;
 import com.SySTomateAlgo.TomateAlgo.Entities.Order;
+import com.SySTomateAlgo.TomateAlgo.Mapper.OrderMapper;
 import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
 import com.SySTomateAlgo.TomateAlgo.Services.PdfGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,9 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
-        return orderService.findById(id)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).body("Order not found"));
+    public ResponseEntity<OrderDTO> findById(@PathVariable Long id) {
+       Order order = orderService.findById(id).orElseThrow(()-> new RuntimeException("no se encontro la orde"));
+       return ResponseEntity.ok(OrderMapper.toDto(order));
     }
 
     @GetMapping("/{id}/pdf")
