@@ -54,9 +54,16 @@ public class OrderServiceImpl implements OrderService {
                 .map(e -> {
                    Product product = e.getKey();
                    double ounces = e.getValue();
-                   double mlNeed = ounces * 29.5735;
-                   int units = (int) Math.ceil(mlNeed/ product.getCapacity());
+                   int units;
 
+                   if (product.getType() == ProductType.Fruta){
+                       double gramsNeeded = ounces * 28.34;
+                       units = (int) Math.ceil((gramsNeeded / product.getCapacity()));
+                   }
+                   else {
+                       double mlNeed = ounces * 29.5735;
+                       units = (int) Math.ceil(mlNeed / product.getCapacity());
+                   }
                    return new OrderItem(product,ounces,units,order);
                 })
                 .collect(Collectors.toList());
