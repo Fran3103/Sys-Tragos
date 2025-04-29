@@ -1,14 +1,12 @@
 package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
-import com.SySTomateAlgo.TomateAlgo.DTOs.ServiceDTO;
-import com.SySTomateAlgo.TomateAlgo.Entities.Cocktail;
+
 import com.SySTomateAlgo.TomateAlgo.Entities.Event;
 import com.SySTomateAlgo.TomateAlgo.Entities.Service;
 import com.SySTomateAlgo.TomateAlgo.Repositories.CocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.EventRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ServiceCocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ServiceRepository;
-import com.SySTomateAlgo.TomateAlgo.Services.ServiceCocktailService;
 import com.SySTomateAlgo.TomateAlgo.Services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +63,7 @@ public class ServiceServiceImpl implements ServiceService {
             e.setService(null);
             eventRepository.save(e);
         }
-        // 2) Ahora sí puedes borrar el Service
+
         repository.deleteById(id);
 
 
