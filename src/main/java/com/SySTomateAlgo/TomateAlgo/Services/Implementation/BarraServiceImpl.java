@@ -3,7 +3,10 @@ package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
 import com.SySTomateAlgo.TomateAlgo.Repositories.BarraRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.BarraService;
+import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +35,7 @@ public class BarraServiceImpl implements BarraService {
 
     @Override
     public void delete(Long id) {
+        System.out.println("esto llega: " + id);
         repository.deleteById(id);
 
     }
@@ -41,7 +45,7 @@ public class BarraServiceImpl implements BarraService {
         Barra existBarra = repository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
 
-        existBarra.setName(updateData.getName());
+        UpdatePropertiesUtil.copyNonNullProperties(updateData,existBarra);
 
         return save(existBarra);
 
