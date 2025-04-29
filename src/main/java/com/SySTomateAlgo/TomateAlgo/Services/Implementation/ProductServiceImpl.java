@@ -1,10 +1,12 @@
 package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
 import com.SySTomateAlgo.TomateAlgo.Entities.Product;
-import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
+import com.SySTomateAlgo.TomateAlgo.Repositories.*;
 import com.SySTomateAlgo.TomateAlgo.Services.ProductService;
+import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository repository;
-
+    @Autowired
+    private CocktailIngredientsRepository cocktailIngredientsRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     @Override
     public Product save(Product product) {
@@ -32,7 +37,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
+        orderItemRepository.deleteByProductId(id);
+        cocktailIngredientsRepository.deleteByProductId(id);
+
         repository.deleteById(id);
     }
 
@@ -41,21 +50,7 @@ public class ProductServiceImpl implements ProductService {
         Product existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado "));
 
-        if (data.getName() != null) {
-            existing.setName(data.getName());
-        }
-        if (data.getType() != null) {
-            existing.setType(data.getType());
-        }
-        if (data.getAlcoholType() != null) {
-            existing.setAlcoholType(data.getAlcoholType());
-        }
-        if (data.getCapacity() != null) {
-            existing.setCapacity(data.getCapacity());
-        }
-        if (data.getStock() != null) {
-            existing.setStock(data.getStock());
-        }
+        UpdatePropertiesUtil.copyNonNullProperties(data,existing);
 
         return repository.save(existing);
     }

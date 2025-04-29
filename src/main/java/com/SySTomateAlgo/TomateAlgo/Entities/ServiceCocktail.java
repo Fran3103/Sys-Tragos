@@ -1,5 +1,6 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class ServiceCocktail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
+    @JsonBackReference
     private Service service;
 
     @ManyToOne(fetch = FetchType.LAZY)

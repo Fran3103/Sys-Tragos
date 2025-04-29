@@ -3,6 +3,7 @@ package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 import com.SySTomateAlgo.TomateAlgo.Entities.Client;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ClientRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.ClientService;
+import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +41,7 @@ public class ClientServiceImpl implements ClientService {
         Client existClient = repository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
 
-        existClient.setName(updateData.getName());
-        existClient.setEmail(updateData.getEmail());
-        existClient.setPhone(updateData.getPhone());
-        existClient.setClientType(updateData.getClientType());
+        UpdatePropertiesUtil.copyNonNullProperties(updateData, existClient);
 
 
         return repository.save(existClient);

@@ -19,6 +19,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order generateOrderFromEvent(Event event) {
 
+
+        Optional<Order> opt = orderRepository.findByEventId(event.getId());
+        Order order = opt.orElseGet(() -> {
+            Order o = new Order();
+            o.setEvent(event);
+            return o;
+        });
+        order.setGeneratedAt(LocalDate.now());
+
         //Relaciones ServiceCocktail
         List<ServiceCocktail> scList = event.getService().getCocktails();
 
@@ -46,9 +55,6 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        Order order = new Order();
-        order.setEvent(event);
-        order.setGeneratedAt(LocalDate.now());
 
         List<OrderItem> items = productTotals.entrySet().stream()
                 .map(e -> {
