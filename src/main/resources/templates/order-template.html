@@ -30,7 +30,7 @@
         <tr><th>Producto</th><th>Cantidad (ml)</th></tr>
         <tr th:each="item : ${entry.value}">
             <td th:text="${item.product.name}">Nombre</td>
-            <td th:text="${item.quantity}">Cantidad</td>
+            <td th:text="${item.units}">Cantidad</td>
         </tr>
     </table>
 </div>
