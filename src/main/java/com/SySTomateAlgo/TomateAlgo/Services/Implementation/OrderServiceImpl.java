@@ -22,31 +22,27 @@ public class OrderServiceImpl implements OrderService {
 
         int guests = event.getInvitaCant();
         int estimatedDrinkPerPerson = 4;
+        int totalDrink = guests * estimatedDrinkPerPerson;
 
-        List<Cocktail> cocktails = event.getService().getCocktails();
+       List<ServiceCocktail> scList = event.getService().getCocktails();
+       int sumIncidences = scList.stream()
+               .mapToInt(ServiceCocktail::getIncidence)
+               .sum();
 
-        for (Cocktail cocktail : cocktails){
-            for (CocktailIngredients ci : cocktail.getIngredients()){
-                Product product = ci.getProduct();
-                double ouncesPerCocktail = ci.getOunces();
+       for (ServiceCocktail sc : scList){
+           int incidence = sc.getIncidence();
+           double portion = totalDrink * (incidence/ (double) sumIncidences);
+           int count = (int) Math.round(portion);
 
-                double totalOnces = guests * estimatedDrinkPerPerson * ouncesPerCocktail;
-                productTotals.merge(product,totalOnces,Double::sum);
-            }
-        }
+           for (CocktailIngredients ci : sc.getCocktail().getIngredients()){
+               Product p = ci.getProduct();
 
-        Map<ProductType , Double> totalsByProductType = new EnumMap<>(ProductType.class);
-        Map<AlcoholType, Double> totalsByAlcoholType = new EnumMap<>(AlcoholType.class);
+               double ouncesNeeded = count *ci.getOunces();
+               productTotals.merge( p , ouncesNeeded, Double::sum);
+           }
+       }
 
-        for (Map.Entry<Product,Double> e: productTotals.entrySet()){
-            Product p = e.getKey();
-            double amount = e.getValue();
 
-            totalsByProductType.merge(p.getType(),amount, Double::sum);
-            if (p.getType() == ProductType.Insumo_Alcoholico && p.getAlcoholType() != null){
-                totalsByAlcoholType.merge(p.getAlcoholType(), amount, Double::sum);
-            }
-        }
 
         Order order = new Order();
         order.setEvent(event);
