@@ -1,5 +1,6 @@
 package com.SySTomateAlgo.TomateAlgo.Services;
 
+import com.SySTomateAlgo.TomateAlgo.DTOs.ServiceDTO;
 import com.SySTomateAlgo.TomateAlgo.Entities.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public interface ServiceService {
     void delete(Long id);
     Service update (Long id, Service service);
 
-    Service addCocktail(Long serviceId, Long cocktailId);
+
     Service removeCocktail(Long serviceId, Long cocktailId);
+    Service saveNew(String name);
 }

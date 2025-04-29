@@ -3,10 +3,7 @@ package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
 import com.SySTomateAlgo.TomateAlgo.Entities.Client;
 import com.SySTomateAlgo.TomateAlgo.Entities.Event;
-import com.SySTomateAlgo.TomateAlgo.Repositories.BarraRepository;
-import com.SySTomateAlgo.TomateAlgo.Repositories.ClientRepository;
-import com.SySTomateAlgo.TomateAlgo.Repositories.EventRepository;
-import com.SySTomateAlgo.TomateAlgo.Repositories.ServiceRepository;
+import com.SySTomateAlgo.TomateAlgo.Repositories.*;
 import com.SySTomateAlgo.TomateAlgo.Services.EventService;
 import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +25,8 @@ public class EventServiceImpl implements EventService {
     public BarraRepository barraRepository;
     @Autowired
     public OrderService orderService;
+    @Autowired
+    public OrderRepository orderRepository;
 
     @Override
     public Event save(Event event) {
@@ -106,7 +105,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void delete(Long id) {
-
+        orderRepository.findByEventId(id)
+                .ifPresent(orderRepository::delete);
         repository.deleteById(id);
 
 

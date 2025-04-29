@@ -3,8 +3,15 @@ package com.SySTomateAlgo.TomateAlgo.DTOs;
 public class ServiceCocktailDTO {
     private Long cocktailId;
     private Integer incidence;
+    private String cocktailName;
 
     public ServiceCocktailDTO() {}
+
+    public ServiceCocktailDTO(Long cocktailId, Integer incidence, String cocktailName) {
+        this.cocktailId = cocktailId;
+        this.incidence = incidence;
+        this.cocktailName = cocktailName;
+    }
 
     public ServiceCocktailDTO(Long cocktailId, Integer incidence) {
         this.cocktailId = cocktailId;
@@ -25,5 +32,13 @@ public class ServiceCocktailDTO {
 
     public void setIncidence(Integer incidence) {
         this.incidence = incidence;
+    }
+
+    public String getCocktailName() {
+        return cocktailName;
+    }
+
+    public void setCocktailName(String cocktailName) {
+        this.cocktailName = cocktailName;
     }
 }
