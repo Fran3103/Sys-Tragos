@@ -18,41 +18,46 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order generateOrderFromEvent(Event event) {
+
+        //Relaciones ServiceCocktail
+        List<ServiceCocktail> scList = event.getService().getCocktails();
+
+        //Acumulador de onzas por producto
         Map<Product, Double> productTotals  = new HashMap<>();
 
-        int guests = event.getInvitaCant();
-        int estimatedDrinkPerPerson = 4;
-        int totalDrink = guests * estimatedDrinkPerPerson;
+        if (!scList.isEmpty()) {
+            int guests = event.getInvitaCant();
+            int drinkPerPerson = 4;
+            int totalDrinks = guests * drinkPerPerson;
+            int sumIncidences = scList.stream().mapToInt(ServiceCocktail::getIncidence).sum();
 
-       List<ServiceCocktail> scList = event.getService().getCocktails();
-       int sumIncidences = scList.stream()
-               .mapToInt(ServiceCocktail::getIncidence)
-               .sum();
+            // se distribuyen los tragos segun incidencias
+            for (ServiceCocktail sc : scList) {
 
-       for (ServiceCocktail sc : scList){
-           int incidence = sc.getIncidence();
-           double portion = totalDrink * (incidence/ (double) sumIncidences);
-           int count = (int) Math.round(portion);
+                double portion = totalDrinks * (sc.getIncidence() / (double) sumIncidences);
+                int count = (int) Math.round(portion);
 
-           for (CocktailIngredients ci : sc.getCocktail().getIngredients()){
-               Product p = ci.getProduct();
+                // suma ingredientes del coctel
+                for (CocktailIngredients ci : sc.getCocktail().getIngredients()) {
 
-               double ouncesNeeded = count *ci.getOunces();
-               productTotals.merge( p , ouncesNeeded, Double::sum);
-           }
-       }
-
-
+                    double ouncesNeeded = count * ci.getOunces();
+                    productTotals.merge(ci.getProduct(), ouncesNeeded, Double::sum);
+                }
+            }
+        }
 
         Order order = new Order();
         order.setEvent(event);
+        order.setGeneratedAt(LocalDate.now());
+
         List<OrderItem> items = productTotals.entrySet().stream()
                 .map(e -> {
-                    OrderItem li = new OrderItem();
-                    li.setProduct(e.getKey());
-                    li.setQuantity(e.getValue());
-                    li.setOrder(order);
-                    return li;
+                   Product product = e.getKey();
+                   double ounces = e.getValue();
+                   double mlNeed = ounces * 29.5735;
+                   int units = (int) Math.ceil(mlNeed/ product.getCapacity());
+
+                   return new OrderItem(product,ounces,units,order);
                 })
                 .collect(Collectors.toList());
         order.setItems(items);
