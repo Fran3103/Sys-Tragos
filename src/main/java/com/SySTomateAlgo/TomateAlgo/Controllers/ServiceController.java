@@ -7,6 +7,7 @@ import com.SySTomateAlgo.TomateAlgo.Entities.ServiceCocktail;
 import com.SySTomateAlgo.TomateAlgo.Mapper.ServiceMapper;
 import com.SySTomateAlgo.TomateAlgo.Services.ServiceCocktailService;
 import com.SySTomateAlgo.TomateAlgo.Services.ServiceService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,15 +37,21 @@ public class ServiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceDTO> findById(@PathVariable  Long id){
-        var svc = service.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Service svc = service.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Servicio no encontrado"));
+
         return ResponseEntity.ok(ServiceMapper.toDto(svc));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceDTO> update(
+    public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestBody ServiceDTO dto
     ) {
+        if (service.findById(id).isEmpty() ) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Servicio no encontrado");
+        }
         Service entity = ServiceMapper.fromDto(dto);
         Service updated = service.update(id, entity);
         return ResponseEntity.ok(ServiceMapper.toDto(updated));
@@ -52,6 +59,11 @@ public class ServiceController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable  Long id){
+        if (service.findById(id).isEmpty() ) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Servicio no encontrado");
+        }
         service.delete(id);
         return  ResponseEntity.ok("Servicio eliminado");
     }
@@ -79,10 +91,15 @@ public class ServiceController {
 
 
     @DeleteMapping("/{serviceId}/cocktails/{Id}")
-    public ResponseEntity<ServiceDTO> removeCocktailFromService(
+    public ResponseEntity<?> removeCocktailFromService(
             @PathVariable Long serviceId,
             @PathVariable Long cocktailId
     ) {
+        if (service.findById(serviceId).isEmpty() ) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Servicio no encontrado");
+        }
         cocktailService.removeFromService(serviceId, cocktailId);
         Service updated = service.findById(serviceId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Service not found"));
@@ -90,15 +107,30 @@ public class ServiceController {
     }
 
     @PostMapping("/{serviceId}/cocktails/batch")
-    public ResponseEntity<ServiceDTO> addCocktailsBatch(
+    public ResponseEntity<?> addCocktailsBatch(
             @PathVariable Long serviceId,
             @RequestBody List<ServiceCocktailDTO> dtos
     ) {
-        dtos.forEach(dto ->
-                cocktailService.addToService(serviceId, dto.getCocktailId(), dto.getIncidence())
-        );
-        Service updated = service.findById(serviceId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ResponseEntity.ok(ServiceMapper.toDto(updated));
+        if (service.findById(serviceId).isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Servicio no encontrado");
+        }
+        for(ServiceCocktailDTO dto : dtos) {
+
+                try {
+                    cocktailService.addToService(serviceId,dto.getCocktailId(),dto.getIncidence());
+                }catch (EntityNotFoundException ex){
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error al añadir cocktail "+ dto.getCocktailId() + ": " + ex.getMessage());
+                }catch (RuntimeException ex) {
+
+                    return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST)
+                            .body("Error en los datos del cocktail " + dto.getCocktailId() + ": " + ex.getMessage());
+                }
+
+        }
+        Service update = service.findById(serviceId).get();
+        return ResponseEntity.ok(ServiceMapper.toDto(update));
     }
 }
