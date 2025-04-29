@@ -37,16 +37,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Long id, Product updateData) {
-        Product existingProduct = repository.findById(id)
+    public Product update(Long id, Product data) {
+        Product existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado "));
 
-        existingProduct.setName(updateData.getName());
-        existingProduct.setType(updateData.getType());
-        existingProduct.setCapacity(updateData.getCapacity());
-        existingProduct.setStock(updateData.getStock());
-        existingProduct.setAlcoholType(updateData.getAlcoholType());
+        if (data.getName() != null) {
+            existing.setName(data.getName());
+        }
+        if (data.getType() != null) {
+            existing.setType(data.getType());
+        }
+        if (data.getAlcoholType() != null) {
+            existing.setAlcoholType(data.getAlcoholType());
+        }
+        if (data.getCapacity() != null) {
+            existing.setCapacity(data.getCapacity());
+        }
+        if (data.getStock() != null) {
+            existing.setStock(data.getStock());
+        }
 
-        return repository.save(existingProduct);
+        return repository.save(existing);
     }
 }

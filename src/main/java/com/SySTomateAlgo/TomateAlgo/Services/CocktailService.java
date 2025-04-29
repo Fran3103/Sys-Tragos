@@ -15,4 +15,6 @@ public interface CocktailService {
     void delete(Long id);
     Cocktail update (Long id, CocktailRequestDTO dto);
 
+    void removeIngredient(Long cocktailId, Long productId);
+
 }

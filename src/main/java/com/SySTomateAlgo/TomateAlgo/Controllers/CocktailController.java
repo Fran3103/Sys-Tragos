@@ -58,24 +58,13 @@ public class CocktailController {
         return ResponseEntity.ok("El Cocktail fue eliminado con exito");
     }
 
-    @DeleteMapping("/{cocktailId}/ingredient/{ciId}")
-    public ResponseEntity<String> removeIngredient(
+    @DeleteMapping("/{cocktailId}/ingredients/{productId}")
+    public ResponseEntity<Void> deleteIngredient(
             @PathVariable Long cocktailId,
-            @PathVariable Long ciId
-    ){
-        Cocktail cocktail = repository.findById(cocktailId)
-                .orElseThrow(()-> new RuntimeException("Cocktail no encontrado"));
-
-        CocktailIngredients toRemove = cocktail.getIngredients().stream()
-                        .filter(ci-> ci.getId().equals(ciId))
-                                .findFirst()
-                                        .orElseThrow(()->new RuntimeException("Ingrediente no encontrado"));
-
-        cocktail.removeIngredient(toRemove);
-
-        repository.save(cocktail);
-
-        return ResponseEntity.ok("Ingrediente Eliminado con exito");
+            @PathVariable Long productId
+    ) {
+        service.removeIngredient(cocktailId, productId);
+        return ResponseEntity.noContent().build();
     }
 
 
