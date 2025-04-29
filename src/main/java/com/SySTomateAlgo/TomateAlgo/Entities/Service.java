@@ -3,10 +3,11 @@ package com.SySTomateAlgo.TomateAlgo.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Service")
+@Table(name = "services")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Service {
 
@@ -17,23 +18,20 @@ public class Service {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "service_cocktail",
-            joinColumns  = @JoinColumn(name = "service_id"),
-            inverseJoinColumns = @JoinColumn(name = "cocktail_id")
-    )
-    private List<Cocktail> cocktails;
+
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceCocktail> cocktails = new ArrayList<>();
 
     public Service() {
     }
 
-    public Service(String name, List<Cocktail> cocktails) {
+    public Service(String name) {
         this.name = name;
-        this.cocktails = cocktails;
     }
 
-    public Service(Long id, String name,List<Cocktail> cocktails) {
+
+    public Service(Long id, String name, List<ServiceCocktail> cocktails) {
         this.id = id;
         this.name = name;
         this.cocktails = cocktails;
@@ -55,11 +53,21 @@ public class Service {
         this.name = name;
     }
 
-    public List<Cocktail> getCocktails() {
+    public List<ServiceCocktail> getCocktails() {
         return cocktails;
     }
 
-    public void setCocktails(List<Cocktail> cocktails) {
+    public void setCocktails(List<ServiceCocktail> cocktails) {
         this.cocktails = cocktails;
+    }
+
+    public void addServiceCocktail(ServiceCocktail sc) {
+        cocktails.add(sc);
+        sc.setService(this);
+    }
+
+    public void removeServiceCocktail(ServiceCocktail sc) {
+        cocktails.remove(sc);
+        sc.setService(null);
     }
 }
