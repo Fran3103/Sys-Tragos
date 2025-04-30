@@ -17,7 +17,7 @@ public class Order {
 
     private LocalDate generatedAt;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private Event event;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -27,6 +27,13 @@ public class Order {
     public Order() {}
 
     public Order(LocalDate generatedAt, Event event, List<OrderItem> items) {
+        this.generatedAt = generatedAt;
+        this.event = event;
+        this.items = items;
+    }
+
+    public Order(Long id, LocalDate generatedAt, Event event, List<OrderItem> items) {
+        this.id = id;
         this.generatedAt = generatedAt;
         this.event = event;
         this.items = items;

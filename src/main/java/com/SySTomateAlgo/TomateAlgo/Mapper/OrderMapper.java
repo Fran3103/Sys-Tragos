@@ -13,10 +13,20 @@ public class OrderMapper {
                 .map(OrderMapper::toItemDto)
                 .collect(Collectors.toList());
 
+        Long eventId = order.getEvent() != null ? order.getEvent().getId() : null;
+
+        if (order.getEvent() == null){
+            throw new IllegalStateException("No se puede crear una orden sin un evento asociado. id: " + order.getId());
+        }
+        if (order.getEvent() != null){
+            eventId = order.getEvent().getId();
+
+        }
+
         return new OrderDTO(
                 order.getId(),
                 order.getGeneratedAt(),
-                order.getEvent().getId(),
+                eventId,
                 items
         );
     }

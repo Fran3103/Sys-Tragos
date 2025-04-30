@@ -65,5 +65,10 @@ public class OrderController {
         return ResponseEntity.ok(OrderMapper.toDto(order));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteOrder(@PathVariable Long id) {
+        String msg = orderService.delete(id);
+        return ResponseEntity.ok(msg); // o ResponseEntity.noContent().build()
+    }
 
 }
