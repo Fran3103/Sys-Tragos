@@ -14,6 +14,15 @@ public class CocktailRequestDTO {
     public CocktailRequestDTO() {
     }
 
+    public CocktailRequestDTO(String name) {
+        this.name = name;
+    }
+
+    public CocktailRequestDTO(String description, String name) {
+        this.description = description;
+        this.name = name;
+    }
+
     public CocktailRequestDTO(String name, List<CocktailIngredientDTO> ingredients, String description) {
         this.name = name;
         this.ingredients = ingredients;

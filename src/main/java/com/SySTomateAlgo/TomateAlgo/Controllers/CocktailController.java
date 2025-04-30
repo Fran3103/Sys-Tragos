@@ -8,8 +8,10 @@ import com.SySTomateAlgo.TomateAlgo.Entities.Product;
 import com.SySTomateAlgo.TomateAlgo.Repositories.CocktailRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.CocktailService;
+import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,31 +42,46 @@ public class CocktailController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cocktail> findById(@PathVariable Long id){
+    public ResponseEntity<?> findById(@PathVariable Long id){
+        if(service.findById(id).isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cocktail no encontrado");
+        }
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cocktail> update(@PathVariable Long id, @RequestBody CocktailRequestDTO dto){
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CocktailRequestDTO dto){
+        if (service.findById(id).isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cocktail no encontrado");
+        }
         return ResponseEntity.ok(service.update(id, dto));
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
-        service.delete(id);
+        if (service.findById(id).isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cocktail no encontrado");
+        }   else service.delete(id);
         return ResponseEntity.ok("El Cocktail fue eliminado con exito");
     }
 
     @DeleteMapping("/{cocktailId}/ingredients/{productId}")
-    public ResponseEntity<Void> deleteIngredient(
+    public ResponseEntity<?> deleteIngredient(
             @PathVariable Long cocktailId,
             @PathVariable Long productId
     ) {
-        service.removeIngredient(cocktailId, productId);
-        return ResponseEntity.noContent().build();
+        if (service.findById(cocktailId).isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cocktail no encontrado");
+        }
+        if (service.findById(productId).isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ingrediente no encontrado");
+        }else
+            service.removeIngredient(cocktailId, productId);
+
+            return ResponseEntity.ok("El Cocktail fue eliminado con exito");
     }
 
 
