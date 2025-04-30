@@ -86,12 +86,13 @@ public class CocktailServiceImpl implements CocktailService {
             exist.setDescription(dto.getDescription());
         }
 
-        // 2. Prepara un Map de los ingredientes actuales por productId
-        Map<Long, CocktailIngredients> actuales = exist.getIngredients().stream()
-                .collect(Collectors.toMap(
-                        ci -> ci.getProduct().getId(),
-                        ci -> ci
-                ));
+        if (dto.getIngredients() != null) {
+            // 2. Prepara un Map de los ingredientes actuales por productId
+            Map<Long, CocktailIngredients> actuales = exist.getIngredients().stream()
+                    .collect(Collectors.toMap(
+                            ci -> ci.getProduct().getId(),
+                            ci -> ci
+                    ));
 
         // 3. Recorre los del DTO: añade nuevos o actualiza onzas
         Set<Long> dtoIds = new HashSet<>();
@@ -110,6 +111,7 @@ public class CocktailServiceImpl implements CocktailService {
                 CocktailIngredients ciNew = new CocktailIngredients(ingDto.getOunces(), p, exist);
                 exist.addIngredient(ciNew);
             }
+        }
         }
 
         /*4. Elimina los ingredientes que antes había y ahora no vienen en el DTO
