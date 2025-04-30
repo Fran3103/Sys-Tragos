@@ -2,6 +2,7 @@ package com.SySTomateAlgo.TomateAlgo.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,6 +10,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "Events")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@SuppressWarnings("null")
 public class Event {
 
     @Id
@@ -19,6 +21,7 @@ public class Event {
 
     private String location;
 
+    @NotNull(message= "La cantidad de invitados  es obligatoria para poder crear el evento.")
     private Integer invitaCant;
 
     private String details;
@@ -39,10 +42,12 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
+    @NotNull(message= "El cliente es obligatorio para poder crear el evento.")
     private Client client;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
+    @NotNull(message= "El servicio es obligatorio para poder crear el evento.")
     private Service service;
 
     @ManyToOne

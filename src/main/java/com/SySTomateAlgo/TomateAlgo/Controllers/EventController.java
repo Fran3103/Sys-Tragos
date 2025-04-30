@@ -3,11 +3,15 @@ package com.SySTomateAlgo.TomateAlgo.Controllers;
 
 import com.SySTomateAlgo.TomateAlgo.Entities.Event;
 import com.SySTomateAlgo.TomateAlgo.Services.EventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/events")
@@ -30,7 +34,14 @@ public class EventController {
 
 
     @PostMapping
-    public ResponseEntity<Event> save(@RequestBody Event event){
+    public ResponseEntity<?> save(@Valid @RequestBody Event event, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            Map<String, String> errores = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(err ->
+                    errores.put(err.getField(), err.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errores);
+        }
+
         return ResponseEntity.ok(eventService.save(event));
     }
 

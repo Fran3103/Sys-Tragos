@@ -6,6 +6,7 @@ import com.SySTomateAlgo.TomateAlgo.Entities.Event;
 import com.SySTomateAlgo.TomateAlgo.Repositories.*;
 import com.SySTomateAlgo.TomateAlgo.Services.EventService;
 import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
+import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,29 +77,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(()-> new RuntimeException("Evento no encontrado"));
 
 
-        exitsEvent.setDate(eventData.getDate());
-        exitsEvent.setDetails(eventData.getDetails());
-        exitsEvent.setLocation(eventData.getLocation());
-        exitsEvent.setInvitaCant(eventData.getInvitaCant());
-        exitsEvent.setTypeEvent(eventData.getTypeEvent());
-        exitsEvent.setEndTime(eventData.getEndTime());
-        exitsEvent.setSetupNote(eventData.getSetupNote());
-        exitsEvent.setSetupTime(eventData.getSetupTime());
-        exitsEvent.setStartTime(eventData.getStartTime());
-        exitsEvent.setStatus(eventData.getStatus());
-
-        if (eventData.getClient() != null) {
-            exitsEvent.setClient(eventData.getClient());
-        }
-
-        if (eventData.getService() != null) {
-            exitsEvent.setService(eventData.getService());
-        }
-
-        if (eventData.getBarra() != null) {
-            exitsEvent.setBarra(eventData.getBarra());
-        }
-
+        UpdatePropertiesUtil.copyNonNullProperties(eventData, exitsEvent);
         return repository.save(exitsEvent);
 
     }
