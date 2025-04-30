@@ -9,5 +9,6 @@ public interface OrderService {
     Order generateOrderFromEvent(Event event);
     List<Order> findAll();
     Optional<Order> findById(Long id);
+    String delete(Long id);
 
 }

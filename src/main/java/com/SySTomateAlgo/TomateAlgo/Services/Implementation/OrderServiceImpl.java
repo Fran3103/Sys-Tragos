@@ -80,11 +80,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll() {
-        return orderRepository.findAll();
+        return orderRepository.findAllWithEvent();
     }
 
     @Override
     public Optional<Order> findById(Long id) {
         return orderRepository.findById(id);
+    }
+
+    @Override
+    public String delete(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada con id: " + id));
+
+        orderRepository.delete(order);
+        return "Orden eliminada correctamente (id: " + id + ")";
     }
 }
