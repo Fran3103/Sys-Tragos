@@ -20,4 +20,4 @@ EXPOSE 8080
 ENV PORT=8080
 
 # Arrancamos pasando el server.port desde la env var PORT
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
