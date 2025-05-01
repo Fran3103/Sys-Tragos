@@ -1,7 +1,6 @@
 services:
   - type: web
-    name: tomatealgo-backend
+    name: tomatealgo-backend       # el nombre de tu servicio en Render
     env: docker
-    plan: free
-    autoDeploy: true
-    region: oregon
+    dockerfilePath: ./Dockerfile   # si tu Dockerfile está en la raíz
+    port: 8080
