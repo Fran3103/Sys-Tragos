@@ -1,16 +1,23 @@
-# Etapa 1: build del proyecto
+
+# Etapa 1: build con Maven y JDK 17
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY . .
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Etapa 2: imagen final con Java
-FROM eclipse-temurin:17
+# Etapa 2: runtime con JRE 17
+FROM eclipse-temurin:17-jre
 WORKDIR /app
+
+# Copiamos el jar generado
 COPY --from=build /app/target/*.jar app.jar
 
-# Puerto que usará Render
-ENV PORT=8080
+# Exponemos el puerto que usará la aplicación HTTP
 EXPOSE 8080
 
-CMD ["java", "-jar", "app.jar"]
+# Definimos la variable PORT por defecto
+ENV PORT=8080
+
+# Arrancamos pasando el server.port desde la env var PORT
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
