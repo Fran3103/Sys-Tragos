@@ -18,6 +18,15 @@ public enum ProductType {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
-        return ProductType.valueOf(value.trim().toUpperCase());
+        String normalized = value
+                .trim()
+                .toUpperCase()
+
+                .replaceAll("[^A-Z0-9]+", "_");
+        try {
+            return ProductType.valueOf(normalized);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }
