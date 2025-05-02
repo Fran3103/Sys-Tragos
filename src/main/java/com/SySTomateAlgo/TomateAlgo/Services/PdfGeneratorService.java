@@ -28,7 +28,7 @@ public class PdfGeneratorService {
         Map<ProductType, List<OrderItem>> itemsByCategory =
                 order.getItems().stream()
                         .collect(Collectors.groupingBy(item ->
-                                        item.getProduct().getType(),
+                                        item.getProduct().getProductType(),
                                 () -> new EnumMap<>(ProductType.class),
                                 Collectors.toList()
                         ));

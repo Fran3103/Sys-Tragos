@@ -23,20 +23,15 @@ public enum AlcoholType {
     Vino_Blanco;
 
     @JsonCreator
-    public static AlcoholType from(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return null;
+    public static AlcoholType from(String key) {
+        if (key == null || key.isBlank()) return null;
+        String trimmed = key.trim();
+        for (AlcoholType at : AlcoholType.values()) {
+            if (at.name().equalsIgnoreCase(trimmed)) {
+                return at;
+            }
         }
-        String normalized = value
-                .trim()
-                .toUpperCase()
-
-                .replaceAll("[^A-Z0-9]+", "_");
-        try {
-            return AlcoholType.valueOf(normalized);
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
+        throw new IllegalArgumentException("Unknown AlcoholType: " + key);
     }
 
 }

@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
                    double ounces = e.getValue();
                    int units;
 
-                   if (product.getType() == ProductType.Fruta){
+                   if (product.getProductType() == ProductType.Fruta){
                        double gramsNeeded = ounces * 28.34;
                        units = (int) Math.ceil((gramsNeeded / product.getCapacity()));
                    }
