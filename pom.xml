@@ -122,15 +122,13 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
-				<includes>
-					<include>**/*.properties</include>
-				</includes>
+
 				<excludes>
 					<!-- Deja fuera tus profiles locales -->
 					<exclude>application-local.properties</exclude>
 				</excludes>
 			</resource>
-			<!-- Si tienes otros recursos que SÍ quieras filtrar, añádelos aquí -->
+
 		</resources>
 		<plugins>
 			<plugin>
