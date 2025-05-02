@@ -16,6 +16,3 @@ ALTER TABLE productos
         'Insumos'
   ));
 
-
-ALTER TYPE product_type_enum
-  ADD VALUE IF NOT EXISTS 'Insumos';
