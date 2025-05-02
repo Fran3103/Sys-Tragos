@@ -10,23 +10,19 @@ public enum ProductType {
     Hielo,
     Cristaleria,
     Equipamiento,
-    Herramientas;
+    Herramientas,
+    Insumos;
 
 
     @JsonCreator
-    public static ProductType from(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return null;
+    public static ProductType from(String key) {
+        if (key == null || key.isBlank()) return null;
+        String trimmed = key.trim();
+        for (ProductType at : ProductType.values()) {
+            if (at.name().equalsIgnoreCase(trimmed)) {
+                return at;
+            }
         }
-        String normalized = value
-                .trim()
-                .toUpperCase()
-
-                .replaceAll("[^A-Z0-9]+", "_");
-        try {
-            return ProductType.valueOf(normalized);
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
+        throw new IllegalArgumentException("Unknown ProductType: " + key);
     }
 }

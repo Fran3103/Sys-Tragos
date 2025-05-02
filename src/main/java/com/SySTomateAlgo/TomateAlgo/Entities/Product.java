@@ -1,5 +1,6 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,13 +12,14 @@ public class Product {
 
     private String name;
 
+    @JsonProperty("productType")
     @Enumerated(EnumType.STRING)
-    @Column(name = "product_type", nullable = false)
+    @Column(name = "product_type")
     private ProductType productType;
 
-
+    @JsonProperty("alcoholType")
     @Enumerated(EnumType.STRING)
-    @Column(name = "alcohol_type", nullable = true)
+    @Column(name = "alcohol_type")
     private AlcoholType alcoholType;
 
     private Double capacity;
@@ -61,14 +63,13 @@ public class Product {
         this.name = name;
     }
 
-    public ProductType getType() {
+    public ProductType getProductType() {
         return productType;
     }
 
-    public void setType(ProductType type) {
-        this.productType = type;
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
-
 
     public AlcoholType getAlcoholType() {
         return alcoholType;
