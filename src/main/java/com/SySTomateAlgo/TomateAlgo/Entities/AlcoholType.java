@@ -27,7 +27,16 @@ public enum AlcoholType {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
-        return AlcoholType.valueOf(value.trim().toUpperCase());
+        String normalized = value
+                .trim()
+                .toUpperCase()
+
+                .replaceAll("[^A-Z0-9]+", "_");
+        try {
+            return AlcoholType.valueOf(normalized);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
 }
