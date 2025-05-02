@@ -13,7 +13,9 @@ ALTER TABLE productos
         'Cristaleria',
         'Equipamiento',
         'Herramientas',
-        'Insumos';
+        'Insumos'
   ));
 
 
+ALTER TYPE product_type_enum
+  ADD VALUE IF NOT EXISTS 'Insumos';
