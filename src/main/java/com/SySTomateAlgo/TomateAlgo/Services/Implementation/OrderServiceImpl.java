@@ -2,6 +2,8 @@ package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
 import com.SySTomateAlgo.TomateAlgo.Entities.*;
 import com.SySTomateAlgo.TomateAlgo.Repositories.OrderRepository;
+import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
+import com.SySTomateAlgo.TomateAlgo.Services.CoefService;
 import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    CoefService coefService;
 
     @Override
     public Order generateOrderFromEvent(Event event) {
@@ -28,51 +34,79 @@ public class OrderServiceImpl implements OrderService {
         });
         order.setGeneratedAt(LocalDate.now());
 
-        //Relaciones ServiceCocktail
-        List<ServiceCocktail> scList = event.getService().getCocktails();
+        double drinksPerPersonPerHour = coefService.getDrinksPerPersonsPerHour();              // coef. tragos x persona x hora
+        double avgOuncesPerDrink      = coefService.getAvgOuncesPerDrink();                   // oz trago promedio
+        double eventTypeCoef          = coefService.getEventTypeCoef(event.getTypeEvent());        // coef. tipo de evento
+        double climateCoef            = coefService.getCLimateCoef(event.getClimateType());       // coef. clima
+        double ageCoef                = coefService.getAgeCoef(event.getAgeInvita());        // coef. edad
+        double durationHours          = event.getDuration();                             // duración del evento en horas
+        int    pax                    = event.getInvitaCant();
 
-        //Acumulador de onzas por producto
-        Map<Product, Double> productTotals  = new HashMap<>();
+
+
+        double consumptionPerPersonOz = drinksPerPersonPerHour
+                * avgOuncesPerDrink
+                *eventTypeCoef
+                *climateCoef
+                *ageCoef
+                *durationHours;
+
+        double totalConsumptionOz = consumptionPerPersonOz * pax;
+
+
+        List<ServiceCocktail> scList = event.getService().getCocktails();
+        Map<Product, Double> productTotalsOz = new HashMap<>();
 
         if (!scList.isEmpty()) {
-            int guests = event.getInvitaCant();
-            int drinkPerPerson = 4;
-            int totalDrinks = guests * drinkPerPerson;
-            int sumIncidences = scList.stream().mapToInt(ServiceCocktail::getIncidence).sum();
+            // suma de incidencias de cocktails
+            int sumIncidences = scList.stream()
+                    .mapToInt(ServiceCocktail::getIncidence)
+                    .sum();
 
-            // se distribuyen los tragos segun incidencias
+
             for (ServiceCocktail sc : scList) {
+                double cocktailFraction       = sc.getIncidence() / (double) sumIncidences;
+                double consumptionByCocktail  = cocktailFraction * totalConsumptionOz;
 
-                double portion = totalDrinks * (sc.getIncidence() / (double) sumIncidences);
-                int count = (int) Math.round(portion);
+                // porcentaje de cada ingrediente dentro del cocktail
+                double totalRecipeOz = sc.getCocktail().getIngredients().stream()
+                        .mapToDouble(CocktailIngredients::getOunces)
+                        .sum();
 
-                // suma ingredientes del coctel
                 for (CocktailIngredients ci : sc.getCocktail().getIngredients()) {
-
-                    double ouncesNeeded = count * ci.getOunces();
-                    productTotals.merge(ci.getProduct(), ouncesNeeded, Double::sum);
+                    double ingredientFraction = ci.getOunces() / totalRecipeOz;
+                    double ingredientOz       = consumptionByCocktail * ingredientFraction;
+                    productTotalsOz.merge(ci.getProduct(), ingredientOz, Double::sum);
                 }
             }
         }
 
-
-        List<OrderItem> items = productTotals.entrySet().stream()
+        // 5️⃣ Calcular unidades a pedir por producto
+        List<OrderItem> items = productTotalsOz.entrySet().stream()
                 .map(e -> {
-                   Product product = e.getKey();
-                   double ounces = e.getValue();
-                   int units;
+                    Product product = e.getKey();
+                    double   oz      = e.getValue();
+                    int      units;
 
-                   if (product.getProductType() == ProductType.Fruta){
-                       double gramsNeeded = ounces * 28.34;
-                       units = (int) Math.ceil((gramsNeeded / product.getCapacity()));
-                   }
-                   else {
-                       double mlNeed = ounces * 29.5735;
-                       units = (int) Math.ceil(mlNeed / product.getCapacity());
-                   }
-                   return new OrderItem(product,ounces,units,order);
+                    if (product.getProductType() == ProductType.Fruta) {
+                        // 1 Oz ≈ 28.34 gramos
+                        double grams      = oz * 28.34;
+                        units = (int) Math.ceil(grams / product.getCapacity());
+                    } else {
+                        // 1 Oz ≈ 29.5735 ml
+                        double mlNeeded   = oz * 29.5735;
+                        units = (int) Math.ceil(mlNeeded / product.getCapacity());
+                    }
+
+                    return new OrderItem(product, oz, units, order);
                 })
                 .collect(Collectors.toList());
+
+        double sumItemsOz = items.stream()
+                .mapToDouble(OrderItem::getOunces)
+                .sum();
+
+
         order.setItems(items);
         return orderRepository.save(order);
 

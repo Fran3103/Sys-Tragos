@@ -1,8 +1,10 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,7 +30,24 @@ public class Event {
 
     private String status;
 
-    private String typeEvent;
+
+    @JsonProperty("typeEvent")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "typeEvent")
+    private EventType typeEvent;
+
+
+    @JsonProperty("ageInvita")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ageInvita")
+    private AgeInvita ageInvita;
+
+
+    @JsonProperty("climateType")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "climate_Type")
+    private ClimateType climateType;
+
 
     private LocalTime startTime;
 
@@ -38,6 +57,8 @@ public class Event {
 
     private String setupNote;
 
+    @Column(name = "duration_hours")
+    private Double duration;
 
 
     @ManyToOne
@@ -57,7 +78,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(Barra barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, String typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date) {
+    public Event(Barra barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration) {
         this.barra = barra;
         this.service = service;
         this.client = client;
@@ -71,9 +92,12 @@ public class Event {
         this.invitaCant = invitaCant;
         this.location = location;
         this.date = date;
+        this.climateType = climateType;
+        this.ageInvita= ageInvita;
+        this.duration = duration;
     }
 
-    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, String typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, Barra barra) {
+    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, Barra barra, ClimateType climateType, AgeInvita ageInvita, double duration) {
         this.id = id;
         this.date = date;
         this.location = location;
@@ -88,8 +112,10 @@ public class Event {
         this.client = client;
         this.service = service;
         this.barra = barra;
+        this.climateType = climateType;
+        this.ageInvita = ageInvita;
+        this.duration = duration;
     }
-
 
     public Long getId() {
         return id;
@@ -115,11 +141,11 @@ public class Event {
         this.location = location;
     }
 
-    public Integer getInvitaCant() {
+    public @NotNull(message = "La cantidad de invitados  es obligatoria para poder crear el evento.") Integer getInvitaCant() {
         return invitaCant;
     }
 
-    public void setInvitaCant(Integer invitaCant) {
+    public void setInvitaCant(@NotNull(message = "La cantidad de invitados  es obligatoria para poder crear el evento.") Integer invitaCant) {
         this.invitaCant = invitaCant;
     }
 
@@ -139,12 +165,28 @@ public class Event {
         this.status = status;
     }
 
-    public String getTypeEvent() {
+    public EventType getTypeEvent() {
         return typeEvent;
     }
 
-    public void setTypeEvent(String typeEvent) {
+    public void setTypeEvent(EventType typeEvent) {
         this.typeEvent = typeEvent;
+    }
+
+    public AgeInvita getAgeInvita() {
+        return ageInvita;
+    }
+
+    public void setAgeInvita(AgeInvita ageInvita) {
+        this.ageInvita = ageInvita;
+    }
+
+    public ClimateType getClimateType() {
+        return climateType;
+    }
+
+    public void setClimateType(ClimateType climateType) {
+        this.climateType = climateType;
     }
 
     public LocalTime getStartTime() {
@@ -179,19 +221,27 @@ public class Event {
         this.setupNote = setupNote;
     }
 
-    public Client getClient() {
+    public Double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
+    }
+
+    public @NotNull(message = "El cliente es obligatorio para poder crear el evento.") Client getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(@NotNull(message = "El cliente es obligatorio para poder crear el evento.") Client client) {
         this.client = client;
     }
 
-    public Service getService() {
+    public @NotNull(message = "El servicio es obligatorio para poder crear el evento.") Service getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(@NotNull(message = "El servicio es obligatorio para poder crear el evento.") Service service) {
         this.service = service;
     }
 

@@ -49,7 +49,6 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(()-> new RuntimeException("Servicio no encotrado"));
             event.setService(service);
         }
-
         Event savedEvent = repository.save(event);
 
         orderService.generateOrderFromEvent(savedEvent);
