@@ -77,17 +77,12 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Barra> barra = new ArrayList<>();
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Station> stations = new ArrayList<>();
+    private List<Barra> barras = new ArrayList<>();
 
     public Event() {
     }
 
-    public Event(List<Barra> barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration, List<Station> stations) {
-        this.barra = barra;
+    public Event( Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras) {
         this.service = service;
         this.client = client;
         this.setupNote = setupNote;
@@ -103,10 +98,10 @@ public class Event {
         this.climateType = climateType;
         this.ageInvita= ageInvita;
         this.duration = duration;
-        this.stations = stations;
+        this.barras = barras;
     }
 
-    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, List<Barra> barra, ClimateType climateType, AgeInvita ageInvita, double duration, List<Station> stations) {
+    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras) {
         this.id = id;
         this.date = date;
         this.location = location;
@@ -120,11 +115,10 @@ public class Event {
         this.setupNote = setupNote;
         this.client = client;
         this.service = service;
-        this.barra = barra;
         this.climateType = climateType;
         this.ageInvita = ageInvita;
         this.duration = duration;
-        this.stations = stations;
+        this.barras = barras;
     }
 
     public Long getId() {
@@ -255,19 +249,12 @@ public class Event {
         this.service = service;
     }
 
-    public List<Barra> getBarra() {
-        return barra;
+
+    public List<Barra> getBarras() {
+        return barras;
     }
 
-    public void setBarra(List<Barra> barra) {
-        this.barra = barra;
-    }
-
-    public List<Station> getStations() {
-        return stations;
-    }
-
-    public void setStations(List<Station> stations) {
-        this.stations = stations;
+    public void setBarras(List<Barra> barras) {
+        this.barras = barras;
     }
 }

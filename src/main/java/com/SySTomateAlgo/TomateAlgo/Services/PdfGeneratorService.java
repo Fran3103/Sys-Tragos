@@ -3,6 +3,7 @@ package com.SySTomateAlgo.TomateAlgo.Services;
 import com.SySTomateAlgo.TomateAlgo.Entities.Order;
 import com.SySTomateAlgo.TomateAlgo.Entities.OrderItem;
 import com.SySTomateAlgo.TomateAlgo.Entities.ProductType;
+import com.SySTomateAlgo.TomateAlgo.Entities.BarraItem;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,12 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("event", order.getEvent());
         context.setVariable("order", order);
+
+        List<BarraItem> flatEquipments = order.getEvent().getBarras().stream().flatMap(station -> station.getEquipments().stream()).toList();
+        context.setVariable("equipment", flatEquipments);
+
+        List<BarraItem> herrEquipments = order.getEvent().getBarras().stream().flatMap(station -> station.getEquipments().stream()).filter(eq -> eq.getProduct().getProductType().name().equals("Herramientas")).toList();
+        context.setVariable("herramientas", herrEquipments);
 
         Map<ProductType, List<OrderItem>> itemsByCategory =
                 order.getItems().stream()

@@ -1,58 +1,115 @@
 package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
-import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
+import com.SySTomateAlgo.TomateAlgo.DTOs.BarraRequestDTO;
+import com.SySTomateAlgo.TomateAlgo.DTOs.BarraResponseDTO;
+import com.SySTomateAlgo.TomateAlgo.Entities.*;
+import com.SySTomateAlgo.TomateAlgo.Mapper.BarraMapper;
+import com.SySTomateAlgo.TomateAlgo.Repositories.EventRepository;
+import com.SySTomateAlgo.TomateAlgo.Repositories.ProductRepository;
 import com.SySTomateAlgo.TomateAlgo.Repositories.BarraRepository;
 import com.SySTomateAlgo.TomateAlgo.Services.BarraService;
-import com.SySTomateAlgo.TomateAlgo.Utils.UpdatePropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BarraServiceImpl implements BarraService {
 
     @Autowired
-    public  BarraRepository repository;
+    public BarraRepository barraRepository;
+
+    @Autowired
+    public EventRepository eventRepository;
+
+    @Autowired
+    public BarraMapper barraMapper;
+
+    @Autowired
+    public ProductRepository productRepository;
 
     @Override
-    public List<Barra> save(List<Barra> barra) {
-        return repository.saveAll(barra);
+    public BarraResponseDTO create(BarraRequestDTO dto) {
+
+
+        Barra barra = new Barra();
+        barra.setName(dto.getName());
+
+        List<BarraItem> equipments = dto.getEquipments().stream()
+                .map(equipDto -> {
+                    Product product = productRepository.findById(equipDto.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + equipDto.getProductId()));
+                    BarraItem se = new BarraItem();
+                    se.setProduct(product);
+                    se.setQuantity(equipDto.getQuantity());
+                    se.setBarras(barra);
+                    return se;
+                })
+                .toList();
+
+        barra.setEquipments(equipments);
+
+        Barra saved = barraRepository.save(barra);
+        return barraMapper.toDTO(saved);
     }
 
     @Override
-    public Barra saveUnic(Barra barra) {
-        return repository.save(barra);
+    public BarraResponseDTO update(Long id, BarraRequestDTO dto) {
+        Barra barra = barraRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Estación no encontrada"));
+
+        barra.setName(dto.getName());
+
+
+        barra.getEquipments().clear();
+
+
+        List<BarraItem> newEquipments = dto.getEquipments().stream()
+                .map(equipDto -> {
+                    Product product = productRepository.findById(equipDto.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + equipDto.getProductId()));
+                    BarraItem se = new BarraItem();
+                    se.setProduct(product);
+                    se.setQuantity(equipDto.getQuantity());
+                    se.setBarras(barra);
+                    return se;
+                })
+                .toList();
+
+        barra.getEquipments().addAll(newEquipments);
+
+        Barra updated = barraRepository.save(barra);
+        return barraMapper.toDTO(updated);
     }
 
     @Override
-    public List<Barra> findAll() {
-        return repository.findAll();
+    public BarraResponseDTO findById(Long id) {
+       Barra barra = barraRepository.findById(id)
+               .orElseThrow(() -> new RuntimeException("Estacion no encontrada"));
+
+       return barraMapper.toDTO(barra);
     }
 
     @Override
-    public Optional<Barra> findById(Long id) {
-        return repository.findById(id);
+    public List<BarraResponseDTO> findByEventId(Long eventId) {
+        List <Barra> barras = barraRepository.findByEventId(eventId);
+
+        return barras.stream().map(barraMapper::toDTO).toList();
     }
 
     @Override
     public void delete(Long id) {
-        System.out.println("esto llega: " + id);
-        repository.deleteById(id);
-
+        if (!barraRepository.existsById(id)) {
+            throw new RuntimeException("Estación no encontrada con ID: " + id);
+        }
+        barraRepository.deleteById(id);
     }
 
     @Override
-    public Barra update(Long id, Barra updateData) {
-        Barra existBarra = repository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
-
-        UpdatePropertiesUtil.copyNonNullProperties(updateData,existBarra);
-
-        return saveUnic(existBarra);
-
+    public List<BarraResponseDTO> findAll() {
+        List<Barra> barras = barraRepository.findAll();
+        return barras.stream()
+                .map(barraMapper::toDTO)
+                .toList();
     }
 }

@@ -1,17 +1,16 @@
 package com.SySTomateAlgo.TomateAlgo.Services;
 
-import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
-
+import com.SySTomateAlgo.TomateAlgo.DTOs.BarraRequestDTO;
+import com.SySTomateAlgo.TomateAlgo.DTOs.BarraResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BarraService {
-    List<Barra> save (List<Barra> barra);
-    Barra saveUnic (Barra barra);
-    List<Barra> findAll();
-    Optional<Barra> findById(Long id);
-    void delete(Long id);
-    Barra update (Long id, Barra barra);
 
+    BarraResponseDTO create(BarraRequestDTO dto);
+    BarraResponseDTO update(Long id, BarraRequestDTO dto);
+    BarraResponseDTO findById(Long id);
+    List<BarraResponseDTO> findByEventId(Long eventId);
+    void delete (Long id);
+    List<BarraResponseDTO> findAll();
 }
