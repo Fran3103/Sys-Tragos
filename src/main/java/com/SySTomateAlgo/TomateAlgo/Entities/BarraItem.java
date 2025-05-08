@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
-public class StationEquipment {
+public class BarraItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,25 +16,25 @@ public class StationEquipment {
     private int quantity;
 
     @ManyToOne
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "barra_id")
     @JsonBackReference
-    private Station station;
+    private Barra barra;
 
-    public StationEquipment() {
+    public BarraItem() {
     }
 
-    public StationEquipment(Product product, int quantity, Station station) {
+    public BarraItem(Product product, int quantity, Barra barra) {
         this.product = product;
         this.quantity = quantity;
-        this.station = station;
+        this.barra = barra;
     }
 
 
-    public StationEquipment(Long id, Product product, int quantity, Station station) {
+    public BarraItem(Long id, Product product, int quantity, Barra barra) {
         this.id = id;
         this.product = product;
         this.quantity = quantity;
-        this.station = station;
+        this.barra = barra;
     }
 
     public Long getId() {
@@ -61,11 +61,11 @@ public class StationEquipment {
         this.quantity = quantity;
     }
 
-    public Station getStation() {
-        return station;
+    public Barra getBarras() {
+        return barra;
     }
 
-    public void setStation(Station station) {
-        this.station = station;
+    public void setBarras(Barra barra) {
+        this.barra = barra;
     }
 }

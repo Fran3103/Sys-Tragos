@@ -1,9 +1,8 @@
 package com.SySTomateAlgo.TomateAlgo.Services.Implementation;
 
-import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
 import com.SySTomateAlgo.TomateAlgo.Entities.Client;
 import com.SySTomateAlgo.TomateAlgo.Entities.Event;
-import com.SySTomateAlgo.TomateAlgo.Entities.Station;
+import com.SySTomateAlgo.TomateAlgo.Entities.Barra;
 import com.SySTomateAlgo.TomateAlgo.Repositories.*;
 import com.SySTomateAlgo.TomateAlgo.Services.EventService;
 import com.SySTomateAlgo.TomateAlgo.Services.OrderService;
@@ -30,8 +29,6 @@ public class EventServiceImpl implements EventService {
     @Autowired
     public OrderRepository orderRepository;
 
-    @Autowired
-    public  StationRepository stationRepository;
 
 
     @Override
@@ -44,25 +41,18 @@ public class EventServiceImpl implements EventService {
             event.setClient(client);
         }
 
-        if (event.getBarra() != null && !event.getBarra().isEmpty()){
-            List<Long> barraIds = event.getBarra().stream().map(Barra::getId).toList();
-
-            List<Barra> barras   = barraRepository.findAllById(barraIds);
-            barras.forEach(barra ->  barra.setEvent(event));
-            event.setBarra(barras);
-        }
         if (event.getService() != null){
             com.SySTomateAlgo.TomateAlgo.Entities.Service service = serviceRepository.findById(event.getService().getId())
                     .orElseThrow(()-> new RuntimeException("Servicio no encotrado"));
             event.setService(service);
         }
 
-        if (event.getStations() != null && !event.getStations().isEmpty()) {
-            List<Long> stationsIds = event.getStations().stream().map(Station::getId).toList();
+        if (event.getBarras() != null && !event.getBarras().isEmpty()) {
+            List<Long> stationsIds = event.getBarras().stream().map(Barra::getId).toList();
 
-            List<Station> stations = stationRepository.findAllById(stationsIds);
-            stations.forEach(s -> s.setEvent(event));
-            event.setStations(stations);
+            List<Barra> barras = barraRepository.findAllById(stationsIds);
+            barras.forEach(s -> s.setEvent(event));
+            event.setBarras(barras);
         }
         Event savedEvent = repository.save(event);
 

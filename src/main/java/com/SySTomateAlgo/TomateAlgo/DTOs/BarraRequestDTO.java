@@ -2,14 +2,14 @@ package com.SySTomateAlgo.TomateAlgo.DTOs;
 
 import java.util.List;
 
-public class StationRequestDTO {
+public class BarraRequestDTO {
     private String name;
     private List<StationEquipmentDTO> equipments;
 
-    public StationRequestDTO() {
+    public BarraRequestDTO() {
     }
 
-    public StationRequestDTO(String name, List<StationEquipmentDTO> equipments) {
+    public BarraRequestDTO(String name, List<StationEquipmentDTO> equipments) {
         this.name = name;
         this.equipments = equipments;
     }

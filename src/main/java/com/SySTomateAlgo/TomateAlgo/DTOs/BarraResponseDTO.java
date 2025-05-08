@@ -2,21 +2,21 @@ package com.SySTomateAlgo.TomateAlgo.DTOs;
 
 import java.util.List;
 
-public class StationResponseDTO {
+public class BarraResponseDTO {
     private Long id;
     private String name;
     private List<ProductDTO> equipmients;
 
 
-    public StationResponseDTO() {
+    public BarraResponseDTO() {
     }
 
-    public StationResponseDTO(String name, List<ProductDTO> equipmients) {
+    public BarraResponseDTO(String name, List<ProductDTO> equipmients) {
         this.name = name;
         this.equipmients = equipmients;
     }
 
-    public StationResponseDTO(Long id, String name, List<ProductDTO> equipmients) {
+    public BarraResponseDTO(Long id, String name, List<ProductDTO> equipmients) {
         this.id = id;
         this.name = name;
         this.equipmients = equipmients;
