@@ -24,6 +24,7 @@ public class PdfGeneratorService {
     public byte[] generateOrderPDF(Order order) throws Exception {
         Context context = new Context();
         context.setVariable("event", order.getEvent());
+        context.setVariable("order", order);
 
         Map<ProductType, List<OrderItem>> itemsByCategory =
                 order.getItems().stream()

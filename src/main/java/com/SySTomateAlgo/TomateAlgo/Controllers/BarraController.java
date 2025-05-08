@@ -20,8 +20,11 @@ public class BarraController {
 
     @PostMapping
     public ResponseEntity<Barra> save(@RequestBody Barra barra) {
-        return  ResponseEntity.ok(service.save(barra));
+        return  ResponseEntity.ok(service.saveUnic(barra));
     }
+
+
+
 
     @GetMapping
     public ResponseEntity <List<Barra>> findAll(){

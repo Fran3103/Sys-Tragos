@@ -19,7 +19,12 @@ public class BarraServiceImpl implements BarraService {
     public  BarraRepository repository;
 
     @Override
-    public Barra save(Barra barra) {
+    public List<Barra> save(List<Barra> barra) {
+        return repository.saveAll(barra);
+    }
+
+    @Override
+    public Barra saveUnic(Barra barra) {
         return repository.save(barra);
     }
 
@@ -47,7 +52,7 @@ public class BarraServiceImpl implements BarraService {
 
         UpdatePropertiesUtil.copyNonNullProperties(updateData,existBarra);
 
-        return save(existBarra);
+        return saveUnic(existBarra);
 
     }
 }

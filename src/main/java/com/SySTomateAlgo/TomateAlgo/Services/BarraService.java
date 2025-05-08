@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BarraService {
-    Barra save (Barra barra);
+    List<Barra> save (List<Barra> barra);
+    Barra saveUnic (Barra barra);
     List<Barra> findAll();
     Optional<Barra> findById(Long id);
     void delete(Long id);
