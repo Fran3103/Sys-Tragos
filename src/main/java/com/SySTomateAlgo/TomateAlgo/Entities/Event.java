@@ -1,6 +1,7 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Events")
@@ -71,14 +74,19 @@ public class Event {
     @NotNull(message= "El servicio es obligatorio para poder crear el evento.")
     private Service service;
 
-    @ManyToOne
-    @JoinColumn(name = "barra_id")
-    private Barra barra;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Barra> barra = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Station> stations = new ArrayList<>();
 
     public Event() {
     }
 
-    public Event(Barra barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration) {
+    public Event(List<Barra> barra, Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration, List<Station> stations) {
         this.barra = barra;
         this.service = service;
         this.client = client;
@@ -95,9 +103,10 @@ public class Event {
         this.climateType = climateType;
         this.ageInvita= ageInvita;
         this.duration = duration;
+        this.stations = stations;
     }
 
-    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, Barra barra, ClimateType climateType, AgeInvita ageInvita, double duration) {
+    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, List<Barra> barra, ClimateType climateType, AgeInvita ageInvita, double duration, List<Station> stations) {
         this.id = id;
         this.date = date;
         this.location = location;
@@ -115,6 +124,7 @@ public class Event {
         this.climateType = climateType;
         this.ageInvita = ageInvita;
         this.duration = duration;
+        this.stations = stations;
     }
 
     public Long getId() {
@@ -245,11 +255,19 @@ public class Event {
         this.service = service;
     }
 
-    public Barra getBarra() {
+    public List<Barra> getBarra() {
         return barra;
     }
 
-    public void setBarra(Barra barra) {
+    public void setBarra(List<Barra> barra) {
         this.barra = barra;
+    }
+
+    public List<Station> getStations() {
+        return stations;
+    }
+
+    public void setStations(List<Station> stations) {
+        this.stations = stations;
     }
 }
