@@ -33,6 +33,9 @@ public class Event {
 
     private String status;
 
+    @Enumerated(EnumType.STRING)
+    private EventMode mode = EventMode.Free_Bar;
+
 
     @JsonProperty("typeEvent")
     @Enumerated(EnumType.STRING)
@@ -82,7 +85,7 @@ public class Event {
     public Event() {
     }
 
-    public Event( Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras) {
+    public Event( Service service, Client client, String setupNote, LocalTime setupTime, LocalTime endTime, LocalTime startTime, EventType typeEvent, String status, String details, Integer invitaCant, String location, LocalDate date, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras, EventMode mode) {
         this.service = service;
         this.client = client;
         this.setupNote = setupNote;
@@ -99,9 +102,10 @@ public class Event {
         this.ageInvita= ageInvita;
         this.duration = duration;
         this.barras = barras;
+        this.mode = mode;
     }
 
-    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras) {
+    public Event(Long id, LocalDate date, String location, Integer invitaCant, String details, String status, EventType typeEvent, LocalTime startTime, LocalTime endTime, LocalTime setupTime, String setupNote, Client client, Service service, ClimateType climateType, AgeInvita ageInvita, double duration, List<Barra> barras, EventMode mode) {
         this.id = id;
         this.date = date;
         this.location = location;
@@ -119,6 +123,7 @@ public class Event {
         this.ageInvita = ageInvita;
         this.duration = duration;
         this.barras = barras;
+        this.mode = mode;
     }
 
     public Long getId() {
@@ -256,5 +261,13 @@ public class Event {
 
     public void setBarras(List<Barra> barras) {
         this.barras = barras;
+    }
+
+    public EventMode getMode() {
+        return mode;
+    }
+
+    public void setMode(EventMode mode) {
+        this.mode = mode;
     }
 }
