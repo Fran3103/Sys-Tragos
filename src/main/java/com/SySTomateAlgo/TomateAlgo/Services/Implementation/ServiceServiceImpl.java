@@ -77,6 +77,8 @@ public class ServiceServiceImpl implements ServiceService {
             existService.setName(serviceData.getName());
         };
 
+        existService.setCristaleria(serviceData.getCristaleria());
+
         return repository.save(existService);
     }
 

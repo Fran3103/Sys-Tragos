@@ -34,6 +34,12 @@ public class OrderServiceImpl implements OrderService {
         });
         order.setGeneratedAt(LocalDate.now());
 
+
+        if (order.getItems() == null) {
+            order.setItems(new ArrayList<>());
+        }
+
+
         double drinksPerPersonPerHour = coefService.getDrinksPerPersonsPerHour();              // coef. tragos x persona x hora
         double avgOuncesPerDrink      = coefService.getAvgOuncesPerDrink();                   // oz trago promedio
         double eventTypeCoef          = coefService.getEventTypeCoef(event.getTypeEvent());        // coef. tipo de evento
@@ -81,8 +87,53 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        // calcular la cristaleria
+
+        List<Product> cristaleria = event.getService().getCristaleria();
+
+        for (Product product : cristaleria){
+            if(product.getProductType() == ProductType.Cristaleria && product.getIncidence() != null){
+
+                int capacityPerBox = product.getCapacityPerBox() != null ? product.getCapacityPerBox() : 1;
+                int totalVasos = (int) Math.ceil(product.getIncidence() * event.getInvitaCant() * 2);
+
+                int units = (int) (Math.ceil((double) totalVasos/ capacityPerBox) * capacityPerBox);
+
+                OrderItem item = new OrderItem(product,0.0,units,order);
+                order.getItems().add(item);
+            }
+        }
+
+        // calcular hielo
+
+        List<Product> hielo = productRepository.findByProductType(ProductType.Hielo);
+
+        if (hielo.isEmpty()){
+            throw new RuntimeException("No se encontro producto tipo hielo");
+        }
+
+
+
+        double hieloBase = event.getInvitaCant() *1.5;
+
+        // tomo el clima y la edad de la gente, mas arriba esta declarado.
+        double hieloAjustado = hieloBase * climateCoef * ageCoef;
+
+        double capacidadBolsas = hielo.get(0).getCapacity() / 1000.0;
+
+
+        int bolsas = (int) Math.ceil(hieloAjustado / capacidadBolsas);
+
+        OrderItem hieloItem = new OrderItem(hielo.get(0), 0.0, bolsas,order);
+        order.getItems().add(hieloItem);
+
+
         // 5️⃣ Calcular unidades a pedir por producto
-        List<OrderItem> items = productTotalsOz.entrySet().stream()
+        List<OrderItem> items = new ArrayList<>(order.getItems());
+
+        items.addAll(
+                productTotalsOz.entrySet().stream()
+
                 .map(e -> {
                     Product product = e.getKey();
                     double   oz      = e.getValue();
@@ -99,12 +150,8 @@ public class OrderServiceImpl implements OrderService {
                     }
 
                     return new OrderItem(product, oz, units, order);
-                })
-                .collect(Collectors.toList());
+                }).toList());
 
-        double sumItemsOz = items.stream()
-                .mapToDouble(OrderItem::getOunces)
-                .sum();
 
 
         order.setItems(items);

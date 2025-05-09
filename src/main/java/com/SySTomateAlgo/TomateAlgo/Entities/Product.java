@@ -1,7 +1,12 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Productos")
@@ -26,22 +31,36 @@ public class Product {
 
     private Integer stock;
 
+    private Double incidence;
 
-    public Product(Long id, String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock) {
+    private Integer capacityPerBox;
+
+    @ManyToMany(mappedBy = "cristaleria")
+    @JsonIgnore
+    private List<Service> service = new ArrayList<>();
+
+
+    public Product(Long id, String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock, Double incidence, Integer capacityPerBox, List<Service> service) {
         this.id = id;
         this.name = name;
         this.productType = productType;
         this.alcoholType = alcoholType;
         this.capacity = capacity;
         this.stock = stock;
+        this.incidence = incidence;
+        this.capacityPerBox = capacityPerBox;
+        this.service = service;
     }
 
-    public Product(String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock) {
+    public Product(String name, ProductType productType, AlcoholType alcoholType, Double capacity, Integer stock, Double incidence, Integer capacityPerBox, List<Service> service) {
         this.name = name;
         this.productType = productType;
         this.alcoholType = alcoholType;
         this.capacity = capacity;
         this.stock = stock;
+        this.incidence = incidence;
+        this.capacityPerBox = capacityPerBox;
+        this.service = service;
     }
 
     public Product() {
@@ -93,5 +112,30 @@ public class Product {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public Double getIncidence() {
+        return incidence;
+    }
+
+    public void setIncidence(Double incidence) {
+        this.incidence = incidence;
+    }
+
+
+    public Integer getCapacityPerBox() {
+        return capacityPerBox;
+    }
+
+    public void setCapacityPerBox(Integer capacityPerBox) {
+        this.capacityPerBox = capacityPerBox;
+    }
+
+    public List<Service> getService() {
+        return service;
+    }
+
+    public void setService(List<Service> service) {
+        this.service = service;
     }
 }
