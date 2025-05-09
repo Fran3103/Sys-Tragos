@@ -1,0 +1,3 @@
+ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS mode  VARCHAR(50) NOT NULL
+        DEFAULT 'Free_Bar';

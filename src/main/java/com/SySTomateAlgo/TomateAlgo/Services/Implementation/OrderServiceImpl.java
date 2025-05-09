@@ -47,17 +47,30 @@ public class OrderServiceImpl implements OrderService {
         double ageCoef                = coefService.getAgeCoef(event.getAgeInvita());        // coef. edad
         double durationHours          = event.getDuration();                             // duración del evento en horas
         int    pax                    = event.getInvitaCant();
+        double totalConsumptionOz;
+
+
+        if (event.getMode() == EventMode.Pack){
+            double adjustedOzPerDrink = avgOuncesPerDrink
+                    *eventTypeCoef
+                    *climateCoef
+                    *ageCoef;
+
+            totalConsumptionOz = adjustedOzPerDrink * pax;
+        }else {
+            double consumptionPerPersonOz = drinksPerPersonPerHour
+                    * avgOuncesPerDrink
+                    *eventTypeCoef
+                    *climateCoef
+                    *ageCoef
+                    *durationHours;
+
+            totalConsumptionOz = consumptionPerPersonOz * pax;
+        }
 
 
 
-        double consumptionPerPersonOz = drinksPerPersonPerHour
-                * avgOuncesPerDrink
-                *eventTypeCoef
-                *climateCoef
-                *ageCoef
-                *durationHours;
 
-        double totalConsumptionOz = consumptionPerPersonOz * pax;
 
 
         List<ServiceCocktail> scList = event.getService().getCocktails();
