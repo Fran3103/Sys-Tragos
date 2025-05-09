@@ -1,13 +1,291 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Orden</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Orden de Pedido</title>
+    <style>
+
+        body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; margin: 0; }
+        h1 { text-align: center; font-size: 24px;margin-top:0;}
+        h2 {font-size: 14px;}
+        th {width: 15px;}
+
+        td,th {font-size:14px;}
+        td{ border: 1px  dashed #999;}
+        td:nth-child(2){text-align: center;}
+        p{margin:3px;}
+
+    .grid-table {
+      width: 100%;
+border-collapse: collapse;
+      table-layout: fixed;      /* ¡muy importante! */
+
+    }
+    /* Tres columnas fijas de 220px */
+    .grid-table col {
+      width: 220px;
+
+    }
+
+    .grid-cell {
+      vertical-align: top;
+      border:none;
+      padding: 0 5px 0 5px;
+
+
+    }
+
+    .grid-cell h2 {
+      font-size: 14px;
+      margin: 0 0 4px 0;
+      text-align: center;
+
+    }
+
+    .inner-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid black;
+    }
+    .inner-th, .inner-td {
+      border: 1px solid #999;
+
+    }
+    .no-content {
+      text-align: center;
+
+    }
+    </style>
 </head>
 <body>
-<h1>Orden de Pedido</h1>
-<p th:text="'Cliente: ' + ${clientName}"></p>
-<p th:text="'Evento en: ' + ${location}"></p>
-<p th:text="'Fecha: ' + ${date}"></p>
+<h1><span th:text="${event.client.name}"></span> / <span th:text="${event.service.name}"></span> -
+    <span th:text="${event.invitaCant}"></span> / <span th:text="${event.date}"></span></h1>
+
+<div style= "overflow: hidden; margin-bottom: 10px;">
+    <div style="float: left; width: 48%; padding-right: 4%; ">
+        <p><strong>Evento:</strong> <span th:text="${event.id}"></span></p>
+        <p><strong>Estado:</strong> <span th:text="${event.status}"></span></p>
+        <p><strong>Tipo:</strong> <span th:text="${event.typeEvent}"></span></p>
+        <p><strong>Tipo de Cliente:</strong> <span th:text="${event.client.clientType}"></span></p>
+        <p><strong>Hora de Inicio:</strong> <span th:text="${event.startTime}"></span></p>
+        <p><strong>Hora de cierre:</strong> <span th:text="${event.endTime}"></span></p>
+    </div>
+
+    <div style="float: left; width: 48%">
+        <p><strong>Nombre:</strong> <span th:text="${event.client.name}"></span></p>
+        <p><strong>Tel:</strong> <span th:text="${event.client.phone}"></span></p>
+        <p><strong>Direccion:</strong> <span th:text="${event.location}"></span></p>
+        <p><strong>Armado:</strong> <span th:text="${event.setupTime}"></span></p>
+        <p><strong>Nota de Armado:</strong> <span th:text="${event.setupNote}"></span></p>
+    </div>
+    <h6><span>Nota: </span> <span th:text="${event.details}"></span></h6>
+</div>
+
+
+
+<!-- Grid de categorías -->
+<table class="grid-table">
+    <colgroup>
+        <col/>
+        <col/>
+        <col/>
+    </colgroup>
+
+    <!-- Fila 1 -->
+    <tr>
+        <td class="grid-cell">
+            <h2>Alcoholes</h2>
+            <table class="inner-table">
+                <!-- encabezado -->
+                <tr>
+                    <th class="inner-th">Producto</th>
+                    <th class="inner-th">EI</th>
+                    <th class="inner-th">RE</th>
+                    <th class="inner-th">EF</th>
+                    <th class="inner-th">Ck</th>
+                </tr>
+                <!-- datos o “Sin contenido” -->
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Insumo_Alcoholico'])}">
+                    <td colspan="5" class="no-content">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Insumo_Alcoholico']}">
+                    <td class="inner-td" th:text="${item.product.name}"></td>
+                    <td class="inner-td" th:text="${item.units}"></td>
+                    <td class="inner-td"></td>
+                    <td class="inner-td"></td>
+                    <td class="inner-td"></td>
+                </tr>
+            </table>
+        </td>
+
+        <td class="grid-cell">
+            <h2>Gaseosas Aguas y Jugos</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Insumo_No_Alcoholico'])}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Insumo_No_Alcoholico']}">
+                    <td  th:text="${item.product.name}"></td>
+                    <td  th:text="${item.units}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+
+        <td class="grid-cell" rowspan="2">
+            <h2>Equipamiento</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(equipment)}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${equipment}">
+                    <td  th:text="${item.product.name}"></td>
+                    <td  th:text="${item.quantity}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Fila 2 -->
+    <tr>
+        <td class="grid-cell">
+            <h2>Cristalería</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Cristaleria'])}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Cristaleria']}">
+                    <td th:text="${item.product.name}"></td>
+                    <td th:text="${item.units}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+        <td class="grid-cell">
+            <h2>Insumos</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Insumos'])}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Insumos']}">
+                    <td th:text="${item.product.name}"></td>
+                    <td th:text="${item.units}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+
+    </tr>
+    <!-- Fila 3 -->
+    <tr>
+        <td class="grid-cell">
+            <h2>Hielo</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Hielo'])}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Hielo']}">
+                    <td th:text="${item.product.name}"></td>
+                    <td th:text="${item.units}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+        <td class="grid-cell">
+            <h2>Fruta</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(order.items.?[product.productType.name() == 'Fruta'])}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${order.items.?[product.productType.name() == 'Fruta']}">
+                    <td th:text="${item.product.name}"></td>
+                    <td th:text="${item.units}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+        <td class="grid-cell">
+            <h2>Herramientas</h2>
+            <table class="inner-table">
+                <tr>
+                    <th style="border: 1px solid #999;">Producto</th>
+                    <th style="border: 1px solid #999;">EI</th>
+                    <th style="border: 1px solid #999;">RE</th>
+                    <th style="border: 1px solid #999;">EF</th>
+                    <th style="border: 1px solid #999;">Ck</th>
+                </tr>
+                <tr th:if="${#lists.isEmpty(herramientas)}">
+                    <td colspan="5" style="text-align: center;">Sin contenido</td>
+                </tr>
+                <tr th:each="item : ${herramientas}">
+                    <td th:text="${item.product.name}"></td>
+                    <td th:text="${item.quantity}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- Si quieres un hueco en blanco para mantener la cuadricula -->
+    <div class="category-block">&#160;</div>
+</table>
+
 </body>
 </html>
