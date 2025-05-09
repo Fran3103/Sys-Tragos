@@ -28,10 +28,12 @@ public class ServiceController {
     @Autowired
     public ServiceCocktailService cocktailService;
 
+    @Autowired
+    private ServiceMapper serviceMapper;
 
     @GetMapping
     public ResponseEntity<List<ServiceDTO>> findAll(){
-        var list = service.findAll().stream().map(ServiceMapper::toDto).collect(Collectors.toList());
+        var list = service.findAll().stream().map(serviceMapper::toDto).collect(Collectors.toList());
         return ResponseEntity.ok(list);
     }
 
@@ -39,7 +41,7 @@ public class ServiceController {
     public ResponseEntity<ServiceDTO> findById(@PathVariable  Long id){
         Service svc = service.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Servicio no encontrado"));
 
-        return ResponseEntity.ok(ServiceMapper.toDto(svc));
+        return ResponseEntity.ok(serviceMapper.toDto(svc));
     }
 
     @PutMapping("/{id}")
@@ -52,9 +54,9 @@ public class ServiceController {
                     .status(HttpStatus.NOT_FOUND)
                     .body("Servicio no encontrado");
         }
-        Service entity = ServiceMapper.fromDto(dto);
+        Service entity = serviceMapper.fromDto(dto);
         Service updated = service.update(id, entity);
-        return ResponseEntity.ok(ServiceMapper.toDto(updated));
+        return ResponseEntity.ok(serviceMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -73,7 +75,7 @@ public class ServiceController {
 
         Service saved = service.saveNew(serviceData.getName());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ServiceMapper.toDto(saved));
+        return ResponseEntity.status(HttpStatus.CREATED).body(serviceMapper.toDto(saved));
      }
 
 
@@ -86,7 +88,7 @@ public class ServiceController {
         cocktailService.addToService(serviceId, dto.getCocktailId(), dto.getIncidence());
         Service updated = service.findById(serviceId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Service not found"));
-        return ResponseEntity.ok(ServiceMapper.toDto(updated));
+        return ResponseEntity.ok(serviceMapper.toDto(updated));
     }
 
 
@@ -103,7 +105,7 @@ public class ServiceController {
         cocktailService.removeFromService(serviceId, cocktailId);
         Service updated = service.findById(serviceId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Service not found"));
-        return ResponseEntity.ok(ServiceMapper.toDto(updated));
+        return ResponseEntity.ok(serviceMapper.toDto(updated));
     }
 
     @PostMapping("/{serviceId}/cocktails/batch")
@@ -131,6 +133,6 @@ public class ServiceController {
 
         }
         Service update = service.findById(serviceId).get();
-        return ResponseEntity.ok(ServiceMapper.toDto(update));
+        return ResponseEntity.ok(serviceMapper.toDto(update));
     }
 }

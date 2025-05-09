@@ -1,5 +1,6 @@
 package com.SySTomateAlgo.TomateAlgo.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -25,18 +26,29 @@ public class Service {
     @JsonManagedReference
     private List<ServiceCocktail> cocktails = new ArrayList<>();
 
+
+
+    @ManyToMany
+    @JoinTable(name = "service_cristaleria",
+    joinColumns = @JoinColumn(name = "service_id"),
+    inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @JsonIgnore
+    private List<Product> cristaleria = new ArrayList<>();
+
     public Service() {
     }
 
-    public Service(String name) {
+    public Service(String name, List<ServiceCocktail> cocktails, List<Product> cristaleria) {
         this.name = name;
+        this.cocktails = cocktails;
+        this.cristaleria = cristaleria;
     }
 
-
-    public Service(Long id, String name, List<ServiceCocktail> cocktails) {
+    public Service(Long id, String name, List<ServiceCocktail> cocktails, List<Product> cristaleria) {
         this.id = id;
         this.name = name;
         this.cocktails = cocktails;
+        this.cristaleria = cristaleria;
     }
 
     public Long getId() {
@@ -71,5 +83,13 @@ public class Service {
     public void removeServiceCocktail(ServiceCocktail sc) {
         cocktails.remove(sc);
         sc.setService(null);
+    }
+
+    public List<Product> getCristaleria() {
+        return cristaleria;
+    }
+
+    public void setCristaleria(List<Product> cristaleria) {
+        this.cristaleria = cristaleria;
     }
 }

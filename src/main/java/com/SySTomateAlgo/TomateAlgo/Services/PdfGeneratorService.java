@@ -26,6 +26,10 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("event", order.getEvent());
         context.setVariable("order", order);
+        double sumItemsOz = order.getItems().stream()
+                .mapToDouble(OrderItem::getOunces)
+                .sum();
+        context.setVariable("totalOunces", sumItemsOz);
 
         List<BarraItem> flatEquipments = order.getEvent().getBarras().stream().flatMap(station -> station.getEquipments().stream()).toList();
         context.setVariable("equipment", flatEquipments);
