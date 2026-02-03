@@ -46,14 +46,14 @@ Producto <|-- Cocktail Cocktail <|-- Service Event --> Client Event --> Service 
 1. Clonar el repositorio:
 :
 ``bash
-  git clone https://github.com/tuusuario/sys-tomatealgo-backend.git 
+  git clone https://github.com/fran3103/sys-tragos-backend.git 
 
 2. Crear la base de datos en MySQL:
-- CREATE DATABASE TomateAlgoDB
+- CREATE DATABASE TragosDB
   
 3. Configurar application.properties con tus credenciales:
 
-spring.datasource.url=jdbc:mysql://localhost:3306/TomateAlgoDB
+spring.datasource.url=jdbc:mysql://localhost:3306/TragosDB
 
 spring.datasource.username=root
 
@@ -73,7 +73,7 @@ POST | /services/{id}/cocktails/{id} | Asociar cóctel a servicio
 
 👨‍💻 Autor
 Franco Aguirre -
-Desarrollador Web Full Stack
+Desarrollador Java 
 
 
 
