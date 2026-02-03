@@ -1,6 +1,6 @@
-# 📦 SYS TomateAlgo - Backend
+# 📦 SYS Tragos - Backend
 
-**SYS TomateAlgo** es un sistema de gestión para barras de eventos, desarrollado para automatizar la planificación, control de insumos y organización de eventos en el rubro de coctelería y servicios móviles.  
+**SYS Tragos** es un sistema de gestión para barras de eventos, desarrollado para automatizar la planificación, control de insumos y organización de eventos en el rubro de coctelería y servicios móviles.  
 Este repositorio corresponde al **backend** desarrollado en **Java + Spring Boot**.
 
 ---
