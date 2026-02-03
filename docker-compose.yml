@@ -8,7 +8,7 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tomate_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tragos_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     networks:
@@ -16,10 +16,10 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: mysql-tomate
+    container_name: mysql-tragos
     restart: always
     environment:
-      MYSQL_DATABASE: tomate_db
+      MYSQL_DATABASE: tragos_db
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3307:3306"
