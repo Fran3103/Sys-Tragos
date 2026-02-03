@@ -8,10 +8,10 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.SySTomateAlgo</groupId>
-	<artifactId>TomateAlgo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>TomateAlgo</name>
+	<groupId>com.SySTragos</groupId>
+	<artifactId>Tragos</artifactId>
+	<version>0.0.1</version>
+	<name>Tragos</name>
 	<description>Sistema de gestion de insumos para eventos</description>
 	<url/>
 	<licenses>
